@@ -1,8 +1,15 @@
-import React from "react";
-import "./App.css";
+import React, { Component } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Dashboard from "./pages/Dashboard/index";
+import NoPage from "./pages/NoPage";
 
-function App() {
-  return <div className="App">Landing Page</div>;
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/*" element={<NoPage />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
-
-export default App;
