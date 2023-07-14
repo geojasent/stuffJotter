@@ -1,4 +1,4 @@
-CREATE TABLE stuffJotterUsers (
+CREATE TABLE stuffjotterusers (
     user_id SERIAL PRIMARY KEY,
     user_username VARCHAR (30) NOT NULL,
     user_password VARCHAR (100) NOT NULL,
@@ -6,7 +6,13 @@ CREATE TABLE stuffJotterUsers (
     user_role VARCHAR (30) NOT NULL
 );
 
-CREATE TABLE itemList (
+CREATE TABLE userplaces (
+    id SERIAL PRIMARY KEY,
+    user_id INT,
+    place VARCHAR NOT NULL
+);
+
+CREATE TABLE itemlist (
     item_id SERIAL PRIMARY KEY,
     user_id INT NOT NULL,
     place VARCHAR NOT NULL,
