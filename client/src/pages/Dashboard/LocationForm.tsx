@@ -1,17 +1,22 @@
 import { useState, useEffect } from "react";
 
 const LocationForm = () => {
-  const [location, setLocation] = useState("");
+  const [location, setLocation] = useState({});
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setLocation(event.target.value);
+    setLocation({ ...location, [event.target.name]: event.target.value });
   };
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     (async () => {
       try {
-        console.log(location);
+        await fetch("http://localhost:5000/", {
+          method: "post",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(location),
+        });
+        window.location.reload();
       } catch (err) {
         console.log(err);
       }
@@ -20,12 +25,10 @@ const LocationForm = () => {
   return (
     <form method="post" onSubmit={handleSubmit}>
       <div>
-        <label>Location: </label>
-        <input
-          type="newLocation"
-          name="newLocation"
-          onChange={handleInputChange}
-        />
+        <label>
+          Location:
+          <input type="newLocation" name="place" onChange={handleInputChange} />
+        </label>
         <button type="submit">Submit</button>
       </div>
     </form>
