@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import LocationCard from "./LocationCard";
 import LocationForm from "./LocationForm";
-import Button from "@mui/material/Button";
+import Fab from "@mui/material/Fab";
+import AddIcon from "@mui/icons-material/Add";
 
 const Dashboard = () => {
   const [showLocationCard, setLocationCard] = useState<Boolean>(false);
@@ -45,13 +46,14 @@ const Dashboard = () => {
           {showLocationCard && <LocationCard areas={locationData} />}
         </div>
         <div>
-          <Button
-            variant="contained"
+          <Fab
+            color="primary"
+            aria-label="add"
             id="addLocationButton"
             onClick={toggleLocationForm}
           >
-            Add Location
-          </Button>
+            <AddIcon />
+          </Fab>
         </div>
         <div>{showLocationForm && <LocationForm />}</div>
       </div>
