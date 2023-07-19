@@ -1,4 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
 
 const LocationForm = () => {
   const [location, setLocation] = useState({});
@@ -24,13 +27,17 @@ const LocationForm = () => {
   }
   return (
     <form method="post" onSubmit={handleSubmit}>
-      <div>
-        <label>
-          Location:
-          <input type="newLocation" name="place" onChange={handleInputChange} />
-        </label>
-        <button type="submit">Submit</button>
-      </div>
+      <Box>
+        <div>
+          <TextField
+            id="standard-basic"
+            label="Location"
+            variant="standard"
+            onChange={handleInputChange}
+          />
+          <Button variant="contained">Submit</Button>
+        </div>
+      </Box>
     </form>
   );
 };

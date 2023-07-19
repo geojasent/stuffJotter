@@ -5,11 +5,11 @@ import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 
 const Dashboard = () => {
-  const [showLocationCard, setLocationCard] = useState<Boolean>(false);
-  const [locationData, setLocationData] = useState<Array<any>>([]);
-  const [showLocationForm, setShowLocationForm] = useState<Boolean>(false);
+  const [showLocationCard, setLocationCard] = useState<boolean>(false);
+  const [locationData, setLocationData] = useState<any[]>([]);
+  const [showLocationForm, setShowLocationForm] = useState<boolean>(false);
 
-  function addLocationProp(locs: Array<any>) {
+  function addLocationProp(locs: any[]) {
     let arr = [];
     for (let i = 0; i < locs.length; i++) {
       arr.push(locs[i].place);

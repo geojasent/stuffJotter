@@ -1,4 +1,5 @@
 import { useState } from "react";
+import LocationCardModal from "./LocationCardModal";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -6,15 +7,15 @@ import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
-import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
-import { Padding } from "@mui/icons-material";
+import add_a_photo from "../../images/add_a_photo.svg";
 
 const LocationCard = (prop: any) => {
   const [locationData] = useState(prop);
+  const imagePath: string = "";
   return locationData.areas.map((data: string) => {
     return (
-      <Card sx={{ display: "flex" }}>
+      <Card sx={{ display: "flex" }} key={data}>
         <Box sx={{ display: "flex", flexDirection: "column" }}>
           <CardContent sx={{ flex: "1 0 auto", paddingBottom: "0px" }}>
             <Typography component="div" variant="h5">
@@ -30,9 +31,7 @@ const LocationCard = (prop: any) => {
           </CardContent>
           <Box sx={{ display: "flex", alignItems: "center", pl: 1, pb: 1 }}>
             <Stack direction="row" spacing={2}>
-              <IconButton aria-label="add" size="small">
-                <AddIcon />
-              </IconButton>
+              <LocationCardModal key={data} area={data} />
               <IconButton aria-label="edit" size="small">
                 <EditIcon />
               </IconButton>
@@ -41,9 +40,8 @@ const LocationCard = (prop: any) => {
         </Box>
         <CardMedia
           component="img"
-          sx={{ width: 151 }}
-          image="/user/images/location/location.jpg"
-          alt="location image"
+          sx={{ width: 111 }}
+          image={imagePath || add_a_photo}
         />
       </Card>
     );
