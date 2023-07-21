@@ -1,5 +1,5 @@
 import { useState } from "react";
-import LocationCardModal from "./LocationCardModal";
+import LocationCardModal from "./LocationCardDialog";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -14,6 +14,8 @@ const LocationCard = (prop: any) => {
   const [locationData] = useState(prop);
   const imagePath: string = "";
   return locationData.areas.map((data: string) => {
+    data = data.charAt(0).toUpperCase() + data.slice(1).toLowerCase();
+
     return (
       <Card sx={{ display: "flex" }} key={data}>
         <Box sx={{ display: "flex", flexDirection: "column" }}>
