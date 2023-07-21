@@ -1,4 +1,4 @@
-import { ChangeEvent } from "react";
+import { useState, ChangeEvent } from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import {
@@ -15,10 +15,10 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 interface formData {
   location: string;
   item: string;
-  itemQuantity: number;
-  purchasePrice: number;
-  totalAmount: number;
-  datePurchased: Date;
+  itemQuantity: string;
+  purchasePrice: string;
+  totalAmount: string;
+  datePurchased: any;
   itemDescription: string;
   itemPurchaseProof: any;
 }
@@ -28,22 +28,12 @@ interface formProps extends formData {
 }
 
 export default function LocationCardDialogForm({
-  location,
-  item,
   itemQuantity,
   purchasePrice,
   totalAmount,
-  datePurchased,
-  itemDescription,
-  itemPurchaseProof,
   updateFields,
 }: formProps) {
-  //   const [itemName, setItemName] = useState<string>("");
-  //   const [itemQuantity, setItemQuantity] = useState<number>(0);
-  //   const [itemAmount, setItemAmount] = useState<number>(0);
-  //   const [totalAmount, setTotalAmount] = useState<number>(0);
-  //   const [itemDescription, setItemDescription] = useState<string>("");
-  //   const [filename, setFilename] = useState("");
+  const [filename, setFilename] = useState("");
 
   const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) {
@@ -51,9 +41,14 @@ export default function LocationCardDialogForm({
     }
     const file = e.target.files[0];
     const { name } = file;
-    updateFields({ itemPurchaseProof: name });
+    setFilename(name);
+    updateFields({ itemPurchaseProof: file });
   };
 
+  function calculateTotal(purchasePrice: string, itemQuantity: string) {
+    let total = (Number(purchasePrice) * Number(itemQuantity)).toString();
+    updateFields({ totalAmount: total });
+  }
   return (
     <Box sx={{ display: "flex", flexWrap: "wrap" }}>
       <TextField
@@ -61,6 +56,7 @@ export default function LocationCardDialogForm({
         label="Item"
         sx={{ m: 1, width: "25ch" }}
         variant="standard"
+        onChange={(e) => updateFields({ item: e.target.value })}
       />
       <TextField
         id="item-quantity"
@@ -71,6 +67,10 @@ export default function LocationCardDialogForm({
         }}
         sx={{ m: 1, width: "25ch" }}
         variant="standard"
+        onChange={(e) => {
+          calculateTotal(purchasePrice, e.target.value);
+          updateFields({ itemQuantity: e.target.value });
+        }}
       />
       <FormControl sx={{ m: 1, width: "25ch" }} variant="standard">
         <InputLabel htmlFor="standard-adornment-purchasePrice">
@@ -79,6 +79,10 @@ export default function LocationCardDialogForm({
         <Input
           id="standard-adornment-purchasePrice"
           startAdornment={<InputAdornment position="start">$</InputAdornment>}
+          onChange={(e) => {
+            updateFields({ purchasePrice: e.target.value });
+            calculateTotal(e.target.value, itemQuantity);
+          }}
         />
       </FormControl>
       <FormControl sx={{ m: 1, width: "25ch" }} variant="standard">
@@ -87,11 +91,16 @@ export default function LocationCardDialogForm({
         </InputLabel>
         <Input
           id="standard-adornment-totalAmount"
+          disabled
           startAdornment={<InputAdornment position="start">$</InputAdornment>}
+          onChange={(e) => updateFields({ totalAmount: e.target.value })}
+          value={totalAmount}
         />
       </FormControl>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <DatePicker />
+        <DatePicker
+          onChange={(newValue) => updateFields({ datePurchased: newValue })}
+        />
       </LocalizationProvider>
       <TextField
         id="standard-multiline-flexible-itemDescription"
@@ -100,6 +109,7 @@ export default function LocationCardDialogForm({
         maxRows={4}
         variant="standard"
         sx={{ m: 1, width: "52ch" }}
+        onChange={(e) => updateFields({ itemDescription: e.target.value })}
       />
       <label htmlFor="upload-photo">
         <input
@@ -113,7 +123,7 @@ export default function LocationCardDialogForm({
         <Button color="info" variant="contained" component="span">
           Upload Receipt
         </Button>
-        {" " + itemPurchaseProof}
+        {" " + filename}
       </label>
     </Box>
   );

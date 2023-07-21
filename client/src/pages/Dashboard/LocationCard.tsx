@@ -1,5 +1,5 @@
 import { useState } from "react";
-import LocationCardModal from "./LocationCardDialog";
+import LocationCardDialog from "./LocationCardDialog";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -33,7 +33,7 @@ const LocationCard = (prop: any) => {
           </CardContent>
           <Box sx={{ display: "flex", alignItems: "center", pl: 1, pb: 1 }}>
             <Stack direction="row" spacing={2}>
-              <LocationCardModal key={data} area={data} />
+              <LocationCardDialog key={data} area={data} />
               <IconButton aria-label="edit" size="small">
                 <EditIcon />
               </IconButton>
