@@ -18,10 +18,11 @@ CREATE TABLE IF NOT EXISTS itemlist (
     place VARCHAR NOT NULL,
     item VARCHAR NOT NULL,
     item_quantity INT NOT NULL,
-    item_description TEXT NOT NULL,
-    item_price NUMERIC(15,4) NOT NULL,
+    item_purchase_price NUMERIC(15,4) NOT NULL,
+    item_total_price NUMERIC(15,4) NOT NULL,
     item_purchase_date VARCHAR (50) NOT NULL,
-    item_image_path VARCHAR (255) NOT NULL
+    item_description TEXT NOT NULL,
+    item_file_path VARCHAR (255) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS stored_file_path (

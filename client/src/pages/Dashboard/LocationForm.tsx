@@ -15,7 +15,7 @@ const LocationForm = () => {
     e.preventDefault();
     (async () => {
       try {
-        await fetch(`http://localhost:5000/newLocation`, {
+        await fetch(`http://localhost:5000/newPlace`, {
           method: "post",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(location),

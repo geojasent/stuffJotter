@@ -68,27 +68,14 @@ export default function LocationCardDialog(prop: any) {
     e.preventDefault();
     updateFields({ place: e.currentTarget.id });
 
-    //handle form post request
-    (async () => {
-      try {
-        await fetch(`http://localhost:5000/${1}/${prop.area.toLowerCase()}`, {
-          method: "post",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        });
-      } catch (err) {
-        console.log(err);
-      }
-    })();
-
     //handle file post request
     const fileData = new FormData();
-    fileData.append("test", selectedFile);
+    fileData.append("upload-photo", selectedFile);
 
     (async () => {
       try {
         await fetch(
-          `http://localhost:5000/${1}/${prop.area.toLowerCase()}/${
+          `http://localhost:5000/${1}/${prop.area.toLowerCase()}/${data.item}/${
             data.itemFilename
           }`,
           {
@@ -97,6 +84,19 @@ export default function LocationCardDialog(prop: any) {
           }
         );
         window.location.reload();
+      } catch (err) {
+        console.log(err);
+      }
+    })();
+
+    //handle form post request
+    (async () => {
+      try {
+        await fetch(`http://localhost:5000/${1}/${prop.area.toLowerCase()}`, {
+          method: "post",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
       } catch (err) {
         console.log(err);
       }
