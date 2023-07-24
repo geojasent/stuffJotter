@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, ChangeEvent } from "react";
 import LocationCardDialogForm from "./LocationCardDialogForm";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
@@ -9,7 +9,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 
 interface formData {
-  location: string;
+  place: string;
   item: string;
   itemQuantity: string;
   purchasePrice: string;
@@ -17,10 +17,11 @@ interface formData {
   datePurchased: any;
   itemDescription: string;
   itemPurchaseProof: any;
+  itemFilename: string;
 }
 
 const initialFormData: formData = {
-  location: "",
+  place: "",
   item: "",
   itemQuantity: "",
   purchasePrice: "",
@@ -28,15 +29,17 @@ const initialFormData: formData = {
   datePurchased: new Date(),
   itemDescription: "",
   itemPurchaseProof: "",
+  itemFilename: "",
 };
 
 export default function LocationCardDialog(prop: any) {
   const [data, setData] = useState(initialFormData);
+  const [selectedFile, setSelectedFile] = useState<any>();
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
-    updateFields({ location: prop.area.toLowerCase() });
+    updateFields({ place: prop.area.toLowerCase() });
   };
 
   const handleClose = () => {
@@ -50,24 +53,55 @@ export default function LocationCardDialog(prop: any) {
       return { ...prev, ...fields };
     });
   }
+  const handleAddFile = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) {
+      return;
+    }
+    const uploadedFile = e.target.files[0];
+    const { name } = uploadedFile;
+    updateFields({ itemFilename: name });
+    updateFields({ itemPurchaseProof: uploadedFile });
+    setSelectedFile(uploadedFile);
+  };
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault(); //refresh to reset form
-    updateFields({ location: e.currentTarget.id });
-    console.log(data);
-    // (async () => {
-    //   try {
-    //     await fetch("http://localhost:5000/", {
-    //       method: "post",
-    //       headers: { "Content-Type": "application/json" },
-    //       body: JSON.stringify(location),
-    //     });
-    //     window.location.reload();
-    //   } catch (err) {
-    //     console.log(err);g
-    //   }
-    // })();
-  }
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    updateFields({ place: e.currentTarget.id });
+
+    //handle form post request
+    (async () => {
+      try {
+        await fetch(`http://localhost:5000/${1}/${prop.area.toLowerCase()}`, {
+          method: "post",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    })();
+
+    //handle file post request
+    const fileData = new FormData();
+    fileData.append("test", selectedFile);
+
+    (async () => {
+      try {
+        await fetch(
+          `http://localhost:5000/${1}/${prop.area.toLowerCase()}/${
+            data.itemFilename
+          }`,
+          {
+            method: "post",
+            body: fileData,
+          }
+        );
+        window.location.reload();
+      } catch (err) {
+        console.log(err);
+      }
+    })();
+  };
 
   return (
     <div>
@@ -78,7 +112,11 @@ export default function LocationCardDialog(prop: any) {
         <form method="post" id={area.toLowerCase()} onSubmit={handleSubmit}>
           <DialogTitle>New {area} Item</DialogTitle>
           <DialogContent>
-            <LocationCardDialogForm {...data} updateFields={updateFields} />
+            <LocationCardDialogForm
+              {...data}
+              updateFields={updateFields}
+              handleAddFile={handleAddFile}
+            />
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>

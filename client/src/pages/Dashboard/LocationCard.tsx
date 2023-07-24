@@ -14,12 +14,18 @@ const LocationCard = (prop: any) => {
   const [locationData] = useState(prop);
   const imagePath: string = "";
   return locationData.areas.map((data: string) => {
-    data = data.charAt(0).toUpperCase() + data.slice(1).toLowerCase();
+    const words = data.split(" ");
+    for (let i = 0; i < words.length; i++) {
+      words[i] = words[i][0].toUpperCase() + words[i].slice(1).toLowerCase();
+    }
+    data = words.join(" ");
 
     return (
       <Card sx={{ display: "flex" }} key={data}>
         <Box sx={{ display: "flex", flexDirection: "column" }}>
-          <CardContent sx={{ flex: "1 0 auto", paddingBottom: "0px" }}>
+          <CardContent
+            sx={{ flex: "1 0 auto", width: "150px", paddingBottom: "0px" }}
+          >
             <Typography component="div" variant="h5">
               123
             </Typography>

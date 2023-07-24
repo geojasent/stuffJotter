@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from "react";
+import { ChangeEvent } from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import {
@@ -13,7 +13,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 interface formData {
-  location: string;
+  place: string;
   item: string;
   itemQuantity: string;
   purchasePrice: string;
@@ -21,30 +21,22 @@ interface formData {
   datePurchased: any;
   itemDescription: string;
   itemPurchaseProof: any;
+  itemFilename: string;
 }
 
 interface formProps extends formData {
   updateFields: (fields: Partial<formData>) => void;
+  handleAddFile: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
 export default function LocationCardDialogForm({
   itemQuantity,
   purchasePrice,
   totalAmount,
+  itemFilename,
   updateFields,
+  handleAddFile,
 }: formProps) {
-  const [filename, setFilename] = useState("");
-
-  const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) {
-      return;
-    }
-    const file = e.target.files[0];
-    const { name } = file;
-    setFilename(name);
-    updateFields({ itemPurchaseProof: file });
-  };
-
   function calculateTotal(purchasePrice: string, itemQuantity: string) {
     let total = (Number(purchasePrice) * Number(itemQuantity)).toString();
     updateFields({ totalAmount: total });
@@ -117,13 +109,13 @@ export default function LocationCardDialogForm({
           id="upload-photo"
           name="upload-photo"
           type="file"
-          onChange={handleFileUpload}
+          onChange={(e) => handleAddFile(e)}
         />
 
         <Button color="info" variant="contained" component="span">
           Upload Receipt
         </Button>
-        {" " + filename}
+        {" " + itemFilename}
       </label>
     </Box>
   );

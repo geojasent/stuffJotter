@@ -7,14 +7,15 @@ const LocationForm = () => {
   const [location, setLocation] = useState({});
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setLocation({ ...location, [event.target.name]: event.target.value });
+    console.log(event.target.value);
+    setLocation({ ...location, place: event.target.value });
   };
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     (async () => {
       try {
-        await fetch("http://localhost:5000/", {
+        await fetch(`http://localhost:5000/newLocation`, {
           method: "post",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(location),
@@ -35,7 +36,9 @@ const LocationForm = () => {
             variant="standard"
             onChange={handleInputChange}
           />
-          <Button variant="contained">Submit</Button>
+          <Button type="submit" variant="contained">
+            Submit
+          </Button>
         </div>
       </Box>
     </form>
