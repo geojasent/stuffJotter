@@ -48,6 +48,7 @@ export default function LocationCardDialogForm({
         label="Item"
         sx={{ m: 1, width: "25ch" }}
         variant="standard"
+        required
         onChange={(e) => updateFields({ item: e.target.value })}
       />
       <TextField
@@ -59,18 +60,22 @@ export default function LocationCardDialogForm({
         }}
         sx={{ m: 1, width: "25ch" }}
         variant="standard"
+        required
         onChange={(e) => {
           calculateTotal(purchasePrice, e.target.value);
           updateFields({ itemQuantity: e.target.value });
         }}
       />
       <FormControl sx={{ m: 1, width: "25ch" }} variant="standard">
-        <InputLabel htmlFor="standard-adornment-purchasePrice">
-          Purchase Price
-        </InputLabel>
-        <Input
+        <TextField
           id="standard-adornment-purchasePrice"
-          startAdornment={<InputAdornment position="start">$</InputAdornment>}
+          label="Purchase Price"
+          InputProps={{
+            startAdornment: <InputAdornment position="start">$</InputAdornment>,
+          }}
+          variant="standard"
+          type="number"
+          required
           onChange={(e) => {
             updateFields({ purchasePrice: e.target.value });
             calculateTotal(e.target.value, itemQuantity);
@@ -91,6 +96,12 @@ export default function LocationCardDialogForm({
       </FormControl>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DatePicker
+          label="Date Purchased"
+          slotProps={{
+            textField: {
+              required: true,
+            },
+          }}
           onChange={(newValue) => updateFields({ datePurchased: newValue })}
         />
       </LocalizationProvider>
@@ -100,6 +111,7 @@ export default function LocationCardDialogForm({
         fullWidth
         maxRows={4}
         variant="standard"
+        required
         sx={{ m: 1, width: "52ch" }}
         onChange={(e) => updateFields({ itemDescription: e.target.value })}
       />

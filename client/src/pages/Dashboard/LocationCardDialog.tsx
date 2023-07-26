@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, useEffect } from "react";
 import LocationCardDialogForm from "./LocationCardDialogForm";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
@@ -18,6 +18,7 @@ interface formData {
   itemDescription: string;
   itemPurchaseProof: any;
   itemFilename: string;
+  formInvalid: boolean;
 }
 
 const initialFormData: formData = {
@@ -30,10 +31,12 @@ const initialFormData: formData = {
   itemDescription: "",
   itemPurchaseProof: "",
   itemFilename: "",
+  formInvalid: true,
 };
 
 export default function LocationCardDialog(prop: any) {
   const [data, setData] = useState(initialFormData);
+  const [isInputInvalid, setInputInvalid] = useState(true);
   const [selectedFile, setSelectedFile] = useState<any>();
   const [open, setOpen] = useState(false);
 
@@ -44,6 +47,10 @@ export default function LocationCardDialog(prop: any) {
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const resetFormData = () => {
+    setData(initialFormData);
   };
 
   const area: string = prop.area;
@@ -103,6 +110,22 @@ export default function LocationCardDialog(prop: any) {
     })();
   };
 
+  useEffect(() => {
+    return data.item &&
+      data.itemQuantity &&
+      data.purchasePrice &&
+      data.datePurchased &&
+      data.itemDescription
+      ? setInputInvalid(false)
+      : setInputInvalid(true);
+  }, [
+    data.item,
+    data.itemQuantity,
+    data.purchasePrice,
+    data.datePurchased,
+    data.itemDescription,
+  ]);
+
   return (
     <div>
       <IconButton aria-label="add" size="small" onClick={handleClickOpen}>
@@ -119,8 +142,19 @@ export default function LocationCardDialog(prop: any) {
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
-            <Button onClick={handleClose} type="submit">
+            <Button
+              onClick={() => {
+                handleClose();
+                resetFormData();
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              disabled={isInputInvalid}
+              onClick={handleClose}
+              type="submit"
+            >
               Add
             </Button>
           </DialogActions>
