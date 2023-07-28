@@ -1,19 +1,26 @@
 import { Request, Response } from "express";
 import pool from "../startup/dbConnection";
+import { dashboardData } from "./dashboardData";
 
 //multiple gets for different forms using params as search query
-const getDashboardPlaces = async (req: Request, res: Response) => {
+const getUserPlaces = async (req: Request, res: Response) => {
   try {
-    //TODO: send rows
-    // const userList = await pool.query(`SELECT * FROM stuffJotterUsers`);
-    // const storedItems = await pool.query(`SELECT * FROM itemList`);
+    const user = req.params.userID;
+    let data;
     const userLocations = await pool.query(
-      `SELECT place FROM userplaces WHERE user_id = 1`
+      `SELECT place FROM userplaces WHERE user_id = ${user}`
     );
-    res.send(userLocations.rows);
+
+    if (userLocations.rows[0]) {
+      const items = await pool.query(
+        `SELECT * FROM itemlist WHERE user_id = ${user}`
+      );
+      data = dashboardData(userLocations.rows, items.rows);
+    }
+    res.send(data);
   } catch (err) {
     console.log(err);
   }
 };
 
-export { getDashboardPlaces };
+export { getUserPlaces };
