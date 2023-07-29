@@ -9,29 +9,48 @@ const Dashboard = () => {
   const [locationData, setLocationData] = useState<any[]>([]);
   const [showLocationForm, setShowLocationForm] = useState<boolean>(false);
 
-  function addLocationProp(locs: any[]) {
-    let arr = [];
-    for (let i = 0; i < locs.length; i++) {
-      arr.push(locs[i].place);
-    }
-    setLocationData(arr);
-  }
+  // function addLocationProp(data: any) {
+  //   let arr = [];
+  //   for (let key in data) {
+  //     console.log(data[key]);
+  //     console.log(key);
+  //     arr.push([key, data[key]]);
+  //   }
+  //   setLocationData(arr);
+  //   console.log(arr);
+  // }
   useEffect(() => {
-    const getLocations = async () => {
+    const getLocationData = async () => {
       try {
-        const data = await fetch("http://localhost:5000/");
+        const data = await fetch(`http://localhost:5000/${1}`);
         data.json().then((res) => {
-          if (res[0]) {
+          if (res) {
             //TODO:fetch locations for user and save local copy of fetched data
             setLocationCard(true);
-            addLocationProp(res);
+            setLocationData(res);
           }
         });
       } catch (err) {
         console.log(err);
       }
     };
-    getLocations();
+    // const getUserItems = async () => {
+    //   try {
+    //     const data = await fetch(`http://localhost:5000/${1}`);
+    //     data.json().then((res) => {
+    //       // if (res[0]) {
+    //       //   //TODO:fetch locations for user and save local copy of fetched data
+    //       //   setLocationCard(true);
+    //       //   addLocationProp(res);
+    //       // }
+    //       console.log(res);
+    //     });
+    //   } catch (err) {
+    //     console.log(err);
+    //   }
+    // };
+    getLocationData();
+    // getUserItems();
   }, []);
 
   const toggleLocationForm = () => {
@@ -43,7 +62,7 @@ const Dashboard = () => {
       <h1>Dashboard</h1>
       <div>
         <div id="container">
-          {showLocationCard && <LocationCard areas={locationData} />}
+          {showLocationCard && <LocationCard data={locationData} />}
         </div>
         <div>
           <Fab

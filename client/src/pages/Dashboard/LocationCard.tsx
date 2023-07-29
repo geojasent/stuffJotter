@@ -11,49 +11,54 @@ import EditIcon from "@mui/icons-material/Edit";
 import add_a_photo from "../../images/add_a_photo.svg";
 
 const LocationCard = (prop: any) => {
-  const [locationData] = useState(prop);
+  const [locationData] = useState<any>(prop.data);
   const imagePath: string = "";
-  return locationData.areas.map((data: string) => {
-    const words = data.split(" ");
-    for (let i = 0; i < words.length; i++) {
-      words[i] = words[i][0].toUpperCase() + words[i].slice(1).toLowerCase();
-    }
-    data = words.join(" ");
-
-    return (
-      <Card sx={{ display: "flex" }} key={data}>
-        <Box sx={{ display: "flex", flexDirection: "column" }}>
-          <CardContent
-            sx={{ flex: "1 0 auto", width: "150px", paddingBottom: "0px" }}
-          >
-            <Typography component="div" variant="h5">
-              123
-            </Typography>
-            <Typography
-              variant="subtitle1"
-              color="text.secondary"
-              component="div"
-            >
-              {data}
-            </Typography>
-          </CardContent>
-          <Box sx={{ display: "flex", alignItems: "center", pl: 1, pb: 1 }}>
-            <Stack direction="row" spacing={2}>
-              <LocationCardDialog key={data} area={data} />
-              <IconButton aria-label="edit" size="small">
-                <EditIcon />
-              </IconButton>
-            </Stack>
-          </Box>
-        </Box>
-        <CardMedia
-          component="img"
-          sx={{ width: 111 }}
-          image={imagePath || add_a_photo}
-        />
-      </Card>
-    );
-  });
+  return (
+    <>
+      {Object.keys(locationData).map((key: string) => {
+        const words = key.split(" ");
+        for (let i = 0; i < words.length; i++) {
+          words[i] =
+            words[i][0].toUpperCase() + words[i].slice(1).toLowerCase();
+        }
+        const location = words.join(" ");
+        return (
+          <Card sx={{ display: "flex" }} key={location}>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <CardContent
+                sx={{ flex: "1 0 auto", width: "150px", paddingBottom: "0px" }}
+              >
+                <Typography component="div" variant="h5">
+                  {locationData[key]}
+                </Typography>
+                <Typography
+                  variant="subtitle1"
+                  color="text.secondary"
+                  component="div"
+                >
+                  {location}
+                </Typography>
+              </CardContent>
+              <Box sx={{ display: "flex", alignItems: "center", pl: 1, pb: 1 }}>
+                <Stack direction="row" spacing={2}>
+                  <LocationCardDialog key={location} area={location} />
+                  <IconButton aria-label="edit" size="small">
+                    <EditIcon />
+                  </IconButton>
+                </Stack>
+              </Box>
+            </Box>
+            <CardMedia
+              component="img"
+              sx={{ width: 111 }}
+              image={imagePath || add_a_photo}
+            />
+          </Card>
+        );
+      })}
+      ;
+    </>
+  );
 };
 
 export default LocationCard;
