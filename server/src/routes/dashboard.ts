@@ -1,5 +1,5 @@
 import express from "express";
-import { getUserPlaces } from "../dashboard/getDashboard";
+import { editLocation, getUserPlaces } from "../dashboard/getDashboard";
 import {
   postNewPlace,
   postNewItem,
@@ -15,6 +15,8 @@ const upload = multer({
 
 //multiple gets for different forms using params as search query
 router.get("/:userID", getUserPlaces);
+
+router.get("/dashboard/edit/:userID/:location", editLocation);
 
 router.post("/newLocation", postNewPlace);
 
