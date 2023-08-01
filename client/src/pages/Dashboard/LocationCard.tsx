@@ -52,7 +52,6 @@ const LocationCard = (prop: any) => {
               <Box sx={{ display: "flex", alignItems: "center", pl: 1, pb: 1 }}>
                 <Stack direction="row" spacing={2}>
                   <LocationCardDialog key={location} area={location} />
-                  {/* <Customcomponent> */}
                   <IconButton
                     aria-label="edit"
                     size="small"
@@ -62,7 +61,6 @@ const LocationCard = (prop: any) => {
                   >
                     <EditIcon />
                   </IconButton>
-                  {/* </Customcomponent> */}
                 </Stack>
               </Box>
             </Box>
