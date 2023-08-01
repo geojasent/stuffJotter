@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import LocationCardDialog from "./LocationCardDialog";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
@@ -13,6 +14,15 @@ import add_a_photo from "../../images/add_a_photo.svg";
 const LocationCard = (prop: any) => {
   const [locationData] = useState<any>(prop.data);
   const imagePath: string = "";
+  let urlLocationParam;
+
+  const navigate = useNavigate();
+
+  const handleClick = (location: string) => {
+    urlLocationParam = location.toLowerCase();
+    navigate(`/dashboard/edit/${urlLocationParam}`);
+  };
+
   return (
     <>
       {Object.keys(locationData).map((key: string) => {
@@ -42,9 +52,17 @@ const LocationCard = (prop: any) => {
               <Box sx={{ display: "flex", alignItems: "center", pl: 1, pb: 1 }}>
                 <Stack direction="row" spacing={2}>
                   <LocationCardDialog key={location} area={location} />
-                  <IconButton aria-label="edit" size="small">
+                  {/* <Customcomponent> */}
+                  <IconButton
+                    aria-label="edit"
+                    size="small"
+                    onClick={() => {
+                      handleClick(location);
+                    }}
+                  >
                     <EditIcon />
                   </IconButton>
+                  {/* </Customcomponent> */}
                 </Stack>
               </Box>
             </Box>
@@ -56,7 +74,6 @@ const LocationCard = (prop: any) => {
           </Card>
         );
       })}
-      ;
     </>
   );
 };

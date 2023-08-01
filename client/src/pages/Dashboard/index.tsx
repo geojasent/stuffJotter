@@ -9,16 +9,6 @@ const Dashboard = () => {
   const [locationData, setLocationData] = useState<any[]>([]);
   const [showLocationForm, setShowLocationForm] = useState<boolean>(false);
 
-  // function addLocationProp(data: any) {
-  //   let arr = [];
-  //   for (let key in data) {
-  //     console.log(data[key]);
-  //     console.log(key);
-  //     arr.push([key, data[key]]);
-  //   }
-  //   setLocationData(arr);
-  //   console.log(arr);
-  // }
   useEffect(() => {
     const getLocationData = async () => {
       try {
@@ -34,23 +24,8 @@ const Dashboard = () => {
         console.log(err);
       }
     };
-    // const getUserItems = async () => {
-    //   try {
-    //     const data = await fetch(`http://localhost:5000/${1}`);
-    //     data.json().then((res) => {
-    //       // if (res[0]) {
-    //       //   //TODO:fetch locations for user and save local copy of fetched data
-    //       //   setLocationCard(true);
-    //       //   addLocationProp(res);
-    //       // }
-    //       console.log(res);
-    //     });
-    //   } catch (err) {
-    //     console.log(err);
-    //   }
-    // };
+
     getLocationData();
-    // getUserItems();
   }, []);
 
   const toggleLocationForm = () => {

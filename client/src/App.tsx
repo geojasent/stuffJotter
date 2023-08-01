@@ -1,8 +1,7 @@
-import React, { Component } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/Dashboard/index";
+import LocationCardEdit from "./pages/Dashboard/LocationCardEdit";
 import NoPage from "./pages/NoPage";
-import "./App.css";
 
 export default function App() {
   return (
@@ -12,7 +11,12 @@ export default function App() {
         href="https://fonts.googleapis.com/icon?family=Material+Icons"
       />
       <Routes>
-        <Route path="/" element={<Dashboard />} />
+        <Route path="/" element />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route
+          path="/dashboard/edit/:location"
+          element={<LocationCardEdit />}
+        />
         <Route path="/*" element={<NoPage />} />
       </Routes>
     </BrowserRouter>
