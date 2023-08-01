@@ -26,9 +26,10 @@ const editLocation = async (req: Request, res: Response) => {
   try {
     const user = req.params.userID;
     const location = req.params.location;
-    console.log(user);
-    console.log(location);
-    res.send([user, location]);
+    const locationItemData = await pool.query(
+      `SELECT * from itemlist WHERE user_id = ${user} AND place = '${location}'` //filter location?
+    );
+    res.send(locationItemData.rows);
   } catch (err) {
     console.log(err);
   }

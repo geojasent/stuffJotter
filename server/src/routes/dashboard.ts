@@ -18,7 +18,7 @@ router.get("/:userID", getUserPlaces);
 
 router.get("/dashboard/edit/:userID/:location", editLocation);
 
-router.post("/newLocation", postNewPlace);
+router.post("/newLocation", postNewPlace); //TODO: update requst to use userid param
 
 router.post(`/:userID/:location`, postNewItem);
 
