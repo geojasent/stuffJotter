@@ -1,127 +1,94 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import Paper from "@mui/material/Paper";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
-import TableRow from "@mui/material/TableRow";
+import { Box } from "@mui/material";
+import {
+  DataGrid,
+  GridColDef,
+  GridToolbar,
+  GridEventListener,
+} from "@mui/x-data-grid";
+import type {} from "@mui/x-data-grid/themeAugmentation";
 
-interface Column {
-  id:
-    | "item"
-    | "item_quantity"
-    | "item_purchase_price"
-    | "item_total_price"
-    | "item_purchase_date"
-    | "item_description";
-  label: string;
-  minWidth?: number;
-  align?: "right";
-  format?: (value: number) => string;
-}
-
-const columns: readonly Column[] = [
-  { id: "item", label: "Item", minWidth: 100 },
-  { id: "item_quantity", label: "Quantity", minWidth: 25 },
+const columns: GridColDef[] = [
   {
-    id: "item_purchase_price",
-    label: "Price",
-    minWidth: 50,
-    align: "right",
-    format: (value: number) => value.toFixed(2),
+    field: "item",
+    headerName: "Item",
+    width: 150,
   },
   {
-    id: "item_total_price",
-    label: "Total Price",
-    minWidth: 50,
-    align: "right",
-    format: (value: number) => value.toFixed(2),
+    field: "item_quantity",
+    headerName: "Quantity",
+    width: 100,
   },
   {
-    id: "item_purchase_date",
-    label: "Purchase Date",
-    minWidth: 50,
-    align: "right",
+    field: "item_purchase_price",
+    headerName: "Price",
+    width: 120,
   },
   {
-    id: "item_description",
-    label: "Description",
-    minWidth: 170,
-    align: "right",
+    field: "item_total_price",
+    headerName: "Total Price",
+    width: 120,
+  },
+  {
+    field: "item_purchase_date",
+    headerName: "Purchase Date",
+    width: 150,
+  },
+  {
+    field: "item_description",
+    headerName: "Description",
+    width: 200,
+  },
+  {
+    field: "place",
+    headerName: "Place",
+    width: 200,
+  },
+  {
+    field: "item_file_path",
+    headerName: "Purchase Proof",
+    width: 200,
+    hideable: false,
   },
 ];
 
-interface Data {
-  item_id: number;
-  item: string;
-  item_quantity: string;
-  item_purchase_price: number;
-  item_total_price: number;
-  item_purchase_date: Date;
-  item_description: string;
-}
-
-function createData(
-  item_id: number,
-  item: string,
-  item_quantity: string,
-  item_purchase_price: number,
-  item_total_price: number,
-  item_purchase_date: Date,
-  item_description: string
-): Data {
-  return {
-    item_id,
-    item,
-    item_quantity,
-    item_purchase_price,
-    item_total_price,
-    item_purchase_date,
-    item_description,
-  };
-}
-
-// const rows: any = [];
-
 export default function LocationCardEdit() {
-  //   const [data, setData] = useState([]);
+  const [rowData, setRowData] = useState<any>([]);
   const [rows, setRows] = useState<any>([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const locationParam = useParams();
   const location = locationParam["location"];
 
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
-
   const handleData = (data: any) => {
     let rows = [];
     for (let item of data) {
-      rows.push(
-        createData(
-          item.item_id,
-          item.item,
-          item.item_quantity,
-          parseInt(item.item_purchase_price),
-          parseInt(item.item_total_price),
-          item.item_purchase_date.slice(0, 10),
-          item.item_description
-        )
-      );
+      rows.push({
+        id: item.item_id,
+        item: item.item,
+        item_quantity: item.item_quantity,
+        item_purchase_price: parseInt(item.item_purchase_price),
+        item_total_price: parseInt(item.item_total_price),
+        item_purchase_date: item.item_purchase_date.slice(0, 10),
+        item_description: item.item_description,
+      });
     }
     setRows(rows);
+  };
+
+  const getTogglableColumns = (columns: GridColDef[]) => {
+    return columns
+      .filter(
+        (column) =>
+          column.field !== "place" && column.field !== "item_file_path"
+      )
+      .map((column) => column.field);
+  };
+
+  const handleRowClick: GridEventListener<"rowClick"> = (params) => {
+    let selectedRow = rowData.filter((x: any) => {
+      return x.item_id === params.row.id;
+    });
   };
 
   useEffect(() => {
@@ -132,6 +99,7 @@ export default function LocationCardEdit() {
         );
         locationItemData.json().then((res) => {
           handleData(res);
+          setRowData(res);
         });
       } catch (err) {
         console.log(err);
@@ -142,60 +110,38 @@ export default function LocationCardEdit() {
 
   return (
     <div>
-      This is the {location} edit page
-      <Paper sx={{ width: "100%", overflow: "hidden" }}>
-        <TableContainer sx={{ maxHeight: 440 }}>
-          <Table stickyHeader aria-label="sticky table">
-            <TableHead>
-              <TableRow>
-                {columns.map((column) => (
-                  <TableCell
-                    key={column.id}
-                    align={column.align}
-                    style={{ minWidth: column.minWidth }}
-                  >
-                    {column.label}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row: any) => {
-                  return (
-                    <TableRow
-                      hover
-                      role="checkbox"
-                      tabIndex={-1}
-                      key={row.item_id}
-                    >
-                      {columns.map((column) => {
-                        const value = row[column.id];
-                        return (
-                          <TableCell key={column.id} align={column.align}>
-                            {column.format && typeof value === "number"
-                              ? column.format(value)
-                              : value}
-                          </TableCell>
-                        );
-                      })}
-                    </TableRow>
-                  );
-                })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[10, 25, 100]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
+      <h2>{location}</h2>
+      <Box sx={{ height: 400, width: "100%" }}>
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 5,
+              },
+            },
+            columns: {
+              columnVisibilityModel: {
+                place: false,
+                item_file_path: false,
+              },
+            },
+          }}
+          slots={{
+            toolbar: GridToolbar,
+          }}
+          slotProps={{
+            columnsPanel: {
+              getTogglableColumns,
+            },
+          }}
+          pageSizeOptions={[5]}
+          checkboxSelection
+          disableRowSelectionOnClick
+          onRowClick={handleRowClick}
         />
-      </Paper>
+      </Box>
     </div>
   );
 }
