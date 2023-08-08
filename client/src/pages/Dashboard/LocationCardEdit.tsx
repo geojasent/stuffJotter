@@ -21,6 +21,7 @@ interface formData {
   itemPurchaseProof: any;
   itemFilename: string;
   formInvalid: boolean;
+  formType: string;
 }
 
 const initialFormData: formData = {
@@ -34,6 +35,7 @@ const initialFormData: formData = {
   itemPurchaseProof: "",
   itemFilename: "",
   formInvalid: false,
+  formType: "",
 };
 
 const columns: GridColDef[] = [
@@ -137,9 +139,15 @@ export default function LocationCardEdit() {
       itemPurchaseProof: rowItem.item_file_path,
       itemFilename: "placeholder",
       formInvalid: false,
+      formType: "edit",
     });
   };
 
+  //   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  //     e.preventDefault();
+  //     e.stopPropagation();
+  //     console.log("edit test");
+  //   };
   useEffect(() => {
     const getLocationItems = async () => {
       try {
@@ -190,6 +198,7 @@ export default function LocationCardEdit() {
           disableRowSelectionOnClick
           onRowClick={handleRowClick}
         />
+        {/* <form method="put" id={selectedData.place} onSubmit={handleSubmit}> */}
         {dialogOpen ? (
           <LocationCardDialog
             key={location}
@@ -199,6 +208,7 @@ export default function LocationCardEdit() {
             {...selectedData}
           />
         ) : null}
+        {/* </form> */}
       </Box>
     </div>
   );

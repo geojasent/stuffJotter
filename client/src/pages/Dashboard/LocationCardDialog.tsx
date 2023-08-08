@@ -19,6 +19,7 @@ interface formData {
   itemPurchaseProof: any;
   itemFilename: string;
   formInvalid: boolean;
+  formType: string;
 }
 
 const initialFormData: formData = {
@@ -32,6 +33,7 @@ const initialFormData: formData = {
   itemPurchaseProof: "",
   itemFilename: "",
   formInvalid: true,
+  formType: "",
 };
 
 export default function LocationCardDialog({ closeDialog, ...prop }: any) {
@@ -75,41 +77,48 @@ export default function LocationCardDialog({ closeDialog, ...prop }: any) {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    e.stopPropagation();
+
+    handleClose();
     updateFields({ place: e.currentTarget.id });
-    console.log("test");
-    //handle file post request
-    // const fileData = new FormData();
-    // fileData.append("upload-photo", selectedFile);
+    console.log(prop);
 
-    // (async () => {
-    //   try {
-    //     await fetch(
-    //       `http://localhost:5000/${1}/${prop.area.toLowerCase()}/${data.item}/${
-    //         data.itemFilename
-    //       }`,
-    //       {
-    //         method: "post",
-    //         body: fileData,
-    //       }
-    //     );
-    //     window.location.reload();
-    //   } catch (err) {
-    //     console.log(err);
-    //   }
-    // })();
+    if (prop.formType === "create") {
+      // handle file post request
+      const fileData = new FormData();
+      fileData.append("upload-photo", selectedFile);
+      (async () => {
+        try {
+          await fetch(
+            `http://localhost:5000/${1}/${prop.area.toLowerCase()}/${
+              data.item
+            }/${data.itemFilename}`,
+            {
+              method: "post",
+              body: fileData,
+            }
+          );
+          window.location.reload();
+        } catch (err) {
+          console.log(err);
+        }
+      })();
+      //handle new item
+      (async () => {
+        try {
+          await fetch(`http://localhost:5000/${1}/${prop.area.toLowerCase()}`, {
+            method: "post",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+        } catch (err) {
+          console.log(err);
+        }
+      })();
+    }
 
-    // //handle form post request
-    // (async () => {
-    //   try {
-    //     await fetch(`http://localhost:5000/${1}/${prop.area.toLowerCase()}`, {
-    //       method: "post",
-    //       headers: { "Content-Type": "application/json" },
-    //       body: JSON.stringify(data),
-    //     });
-    //   } catch (err) {
-    //     console.log(err);
-    //   }
-    // })();
+    if (prop.formType === "edit") {
+    }
   };
 
   useEffect(() => {
@@ -144,11 +153,7 @@ export default function LocationCardDialog({ closeDialog, ...prop }: any) {
             >
               Cancel
             </Button>
-            <Button
-              disabled={isInputInvalid}
-              onClick={handleClose}
-              type="submit"
-            >
+            <Button disabled={isInputInvalid} type="submit">
               Add
             </Button>
           </DialogActions>

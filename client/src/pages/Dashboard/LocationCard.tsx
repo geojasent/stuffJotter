@@ -22,6 +22,7 @@ interface formData {
   itemPurchaseProof: any;
   itemFilename: string;
   formInvalid: boolean;
+  formType: string;
 }
 
 const initialFormData: formData = {
@@ -35,6 +36,7 @@ const initialFormData: formData = {
   itemPurchaseProof: "",
   itemFilename: "",
   formInvalid: false,
+  formType: "create",
 };
 
 const LocationCard = (prop: any) => {
