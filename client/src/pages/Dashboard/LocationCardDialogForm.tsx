@@ -11,6 +11,7 @@ import {
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
 
 interface formData {
   place: string;
@@ -30,9 +31,12 @@ interface formProps extends formData {
 }
 
 export default function LocationCardDialogForm({
+  item,
   itemQuantity,
   purchasePrice,
   totalAmount,
+  datePurchased,
+  itemDescription,
   itemFilename,
   updateFields,
   handleAddFile,
@@ -41,6 +45,7 @@ export default function LocationCardDialogForm({
     let total = (Number(purchasePrice) * Number(itemQuantity)).toString();
     updateFields({ totalAmount: total });
   }
+
   return (
     <Box sx={{ display: "flex", flexWrap: "wrap" }}>
       <TextField
@@ -48,6 +53,7 @@ export default function LocationCardDialogForm({
         label="Item"
         sx={{ m: 1, width: "25ch" }}
         variant="standard"
+        defaultValue={item}
         required
         onChange={(e) => updateFields({ item: e.target.value })}
       />
@@ -60,6 +66,7 @@ export default function LocationCardDialogForm({
         }}
         sx={{ m: 1, width: "25ch" }}
         variant="standard"
+        defaultValue={itemQuantity}
         required
         onChange={(e) => {
           calculateTotal(purchasePrice, e.target.value);
@@ -74,6 +81,7 @@ export default function LocationCardDialogForm({
             startAdornment: <InputAdornment position="start">$</InputAdornment>,
           }}
           variant="standard"
+          defaultValue={Number(purchasePrice).toFixed(2)}
           type="number"
           required
           onChange={(e) => {
@@ -91,12 +99,13 @@ export default function LocationCardDialogForm({
           disabled
           startAdornment={<InputAdornment position="start">$</InputAdornment>}
           onChange={(e) => updateFields({ totalAmount: e.target.value })}
-          value={totalAmount}
+          value={Number(totalAmount).toFixed(2)}
         />
       </FormControl>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DatePicker
           label="Date Purchased"
+          defaultValue={dayjs(datePurchased)}
           slotProps={{
             textField: {
               required: true,
@@ -111,6 +120,7 @@ export default function LocationCardDialogForm({
         fullWidth
         maxRows={4}
         variant="standard"
+        defaultValue={itemDescription}
         required
         sx={{ m: 1, width: "52ch" }}
         onChange={(e) => updateFields({ itemDescription: e.target.value })}

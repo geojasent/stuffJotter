@@ -11,8 +11,35 @@ import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import add_a_photo from "../../images/add_a_photo.svg";
 
+interface formData {
+  place: string;
+  item: string;
+  itemQuantity: string;
+  purchasePrice: string;
+  totalAmount: string;
+  datePurchased: any;
+  itemDescription: string;
+  itemPurchaseProof: any;
+  itemFilename: string;
+  formInvalid: boolean;
+}
+
+const initialFormData: formData = {
+  place: "",
+  item: "",
+  itemQuantity: "",
+  purchasePrice: "",
+  totalAmount: "",
+  datePurchased: new Date(),
+  itemDescription: "",
+  itemPurchaseProof: "",
+  itemFilename: "",
+  formInvalid: false,
+};
+
 const LocationCard = (prop: any) => {
   const [locationData] = useState<any>(prop.data);
+  const [inputPlaceholder] = useState<any>(initialFormData);
   const imagePath: string = "";
   let urlLocationParam;
 
@@ -51,7 +78,12 @@ const LocationCard = (prop: any) => {
               </CardContent>
               <Box sx={{ display: "flex", alignItems: "center", pl: 1, pb: 1 }}>
                 <Stack direction="row" spacing={2}>
-                  <LocationCardDialog key={location} area={location} />
+                  <LocationCardDialog
+                    key={location}
+                    area={location}
+                    edit={false}
+                    {...inputPlaceholder}
+                  />
                   <IconButton
                     aria-label="edit"
                     size="small"

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import LocationCardDialog from "./LocationCardDialog";
 import { Box } from "@mui/material";
 import {
   DataGrid,
@@ -8,6 +9,32 @@ import {
   GridEventListener,
 } from "@mui/x-data-grid";
 import type {} from "@mui/x-data-grid/themeAugmentation";
+
+interface formData {
+  place: string;
+  item: string;
+  itemQuantity: string;
+  purchasePrice: string;
+  totalAmount: string;
+  datePurchased: any;
+  itemDescription: string;
+  itemPurchaseProof: any;
+  itemFilename: string;
+  formInvalid: boolean;
+}
+
+const initialFormData: formData = {
+  place: "",
+  item: "",
+  itemQuantity: "",
+  purchasePrice: "",
+  totalAmount: "",
+  datePurchased: new Date(),
+  itemDescription: "",
+  itemPurchaseProof: "",
+  itemFilename: "",
+  formInvalid: false,
+};
 
 const columns: GridColDef[] = [
   {
@@ -55,7 +82,10 @@ const columns: GridColDef[] = [
 
 export default function LocationCardEdit() {
   const [rowData, setRowData] = useState<any>([]);
+  const [open, setOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [rows, setRows] = useState<any>([]);
+  const [selectedData, setSelectedData] = useState<any>(initialFormData);
 
   const locationParam = useParams();
   const location = locationParam["location"];
@@ -85,9 +115,28 @@ export default function LocationCardEdit() {
       .map((column) => column.field);
   };
 
+  const handleClose = () => {
+    setOpen(false);
+    setDialogOpen(false);
+  };
+
   const handleRowClick: GridEventListener<"rowClick"> = (params) => {
+    setDialogOpen(!open);
     let selectedRow = rowData.filter((x: any) => {
       return x.item_id === params.row.id;
+    });
+    const rowItem = selectedRow[0];
+    setSelectedData({
+      item: rowItem.item,
+      place: rowItem.place,
+      itemQuantity: rowItem.item_quantity,
+      purchasePrice: rowItem.item_purchase_price,
+      totalAmount: rowItem.item_total_price,
+      datePurchased: rowItem.item_purchase_date,
+      itemDescription: rowItem.item_description,
+      itemPurchaseProof: rowItem.item_file_path,
+      itemFilename: "placeholder",
+      formInvalid: false,
     });
   };
 
@@ -141,6 +190,15 @@ export default function LocationCardEdit() {
           disableRowSelectionOnClick
           onRowClick={handleRowClick}
         />
+        {dialogOpen ? (
+          <LocationCardDialog
+            key={location}
+            area={location}
+            edit={dialogOpen}
+            closeDialog={handleClose}
+            {...selectedData}
+          />
+        ) : null}
       </Box>
     </div>
   );

@@ -34,18 +34,20 @@ const initialFormData: formData = {
   formInvalid: true,
 };
 
-export default function LocationCardDialog(prop: any) {
-  const [data, setData] = useState(initialFormData);
-  const [isInputInvalid, setInputInvalid] = useState(true);
+export default function LocationCardDialog({ closeDialog, ...prop }: any) {
+  const [data, setData] = useState(prop || initialFormData);
+  const [isInputInvalid, setInputInvalid] = useState(false);
   const [selectedFile, setSelectedFile] = useState<any>();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(prop.edit || false);
 
   const handleClickOpen = () => {
     setOpen(true);
-    updateFields({ place: prop.area.toLowerCase() });
   };
 
   const handleClose = () => {
+    if (closeDialog) {
+      closeDialog();
+    }
     setOpen(false);
   };
 
@@ -56,7 +58,7 @@ export default function LocationCardDialog(prop: any) {
   const area: string = prop.area;
 
   function updateFields(fields: Partial<formData>) {
-    setData((prev) => {
+    setData((prev: any) => {
       return { ...prev, ...fields };
     });
   }
@@ -74,63 +76,55 @@ export default function LocationCardDialog(prop: any) {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     updateFields({ place: e.currentTarget.id });
-
+    console.log("test");
     //handle file post request
-    const fileData = new FormData();
-    fileData.append("upload-photo", selectedFile);
+    // const fileData = new FormData();
+    // fileData.append("upload-photo", selectedFile);
 
-    (async () => {
-      try {
-        await fetch(
-          `http://localhost:5000/${1}/${prop.area.toLowerCase()}/${data.item}/${
-            data.itemFilename
-          }`,
-          {
-            method: "post",
-            body: fileData,
-          }
-        );
-        window.location.reload();
-      } catch (err) {
-        console.log(err);
-      }
-    })();
+    // (async () => {
+    //   try {
+    //     await fetch(
+    //       `http://localhost:5000/${1}/${prop.area.toLowerCase()}/${data.item}/${
+    //         data.itemFilename
+    //       }`,
+    //       {
+    //         method: "post",
+    //         body: fileData,
+    //       }
+    //     );
+    //     window.location.reload();
+    //   } catch (err) {
+    //     console.log(err);
+    //   }
+    // })();
 
-    //handle form post request
-    (async () => {
-      try {
-        await fetch(`http://localhost:5000/${1}/${prop.area.toLowerCase()}`, {
-          method: "post",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        });
-      } catch (err) {
-        console.log(err);
-      }
-    })();
+    // //handle form post request
+    // (async () => {
+    //   try {
+    //     await fetch(`http://localhost:5000/${1}/${prop.area.toLowerCase()}`, {
+    //       method: "post",
+    //       headers: { "Content-Type": "application/json" },
+    //       body: JSON.stringify(data),
+    //     });
+    //   } catch (err) {
+    //     console.log(err);
+    //   }
+    // })();
   };
 
   useEffect(() => {
-    return data.item &&
-      data.itemQuantity &&
-      data.purchasePrice &&
-      data.datePurchased &&
-      data.itemDescription
+    data.item && data.itemQuantity && data.purchasePrice && data.itemDescription
       ? setInputInvalid(false)
       : setInputInvalid(true);
-  }, [
-    data.item,
-    data.itemQuantity,
-    data.purchasePrice,
-    data.datePurchased,
-    data.itemDescription,
-  ]);
+  }, [data.item, data.itemQuantity, data.purchasePrice, data.itemDescription]);
 
   return (
     <div>
-      <IconButton aria-label="add" size="small" onClick={handleClickOpen}>
-        <AddIcon />
-      </IconButton>
+      {!prop.edit ? (
+        <IconButton aria-label="add" size="small" onClick={handleClickOpen}>
+          <AddIcon />
+        </IconButton>
+      ) : null}
       <Dialog open={open} onClose={handleClose}>
         <form method="post" id={area.toLowerCase()} onSubmit={handleSubmit}>
           <DialogTitle>New {area} Item</DialogTitle>
