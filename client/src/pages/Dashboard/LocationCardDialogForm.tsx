@@ -79,6 +79,7 @@ export default function LocationCardDialogForm({
           label="Purchase Price"
           InputProps={{
             startAdornment: <InputAdornment position="start">$</InputAdornment>,
+            inputProps: { step: ".01" },
           }}
           variant="standard"
           defaultValue={Number(purchasePrice).toFixed(2)}

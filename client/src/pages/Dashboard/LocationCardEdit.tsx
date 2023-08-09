@@ -12,6 +12,7 @@ import type {} from "@mui/x-data-grid/themeAugmentation";
 
 interface formData {
   place: string;
+  itemId: undefined | number;
   item: string;
   itemQuantity: string;
   purchasePrice: string;
@@ -26,6 +27,7 @@ interface formData {
 
 const initialFormData: formData = {
   place: "",
+  itemId: undefined,
   item: "",
   itemQuantity: "",
   purchasePrice: "",
@@ -129,6 +131,7 @@ export default function LocationCardEdit() {
     });
     const rowItem = selectedRow[0];
     setSelectedData({
+      itemId: rowItem.item_id,
       item: rowItem.item,
       place: rowItem.place,
       itemQuantity: rowItem.item_quantity,

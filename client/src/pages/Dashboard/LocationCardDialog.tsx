@@ -81,7 +81,6 @@ export default function LocationCardDialog({ closeDialog, ...prop }: any) {
 
     handleClose();
     updateFields({ place: e.currentTarget.id });
-    console.log(prop);
 
     if (prop.formType === "create") {
       // handle file post request
@@ -118,6 +117,23 @@ export default function LocationCardDialog({ closeDialog, ...prop }: any) {
     }
 
     if (prop.formType === "edit") {
+      (async () => {
+        try {
+          await fetch(
+            `http://localhost:5000/dashboard/edit/${1}/${prop.area.toLowerCase()}/${
+              prop.itemId
+            }`,
+            {
+              method: "put",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(data),
+            }
+          );
+          window.location.reload();
+        } catch (err) {
+          console.log(err);
+        }
+      })();
     }
   };
 
