@@ -4,6 +4,7 @@ import LandingPage from "./pages/LandingPage/LandingPage";
 import Dashboard from "./pages/Dashboard/index";
 import LocationCardEdit from "./pages/Dashboard/LocationCardEdit";
 import NoPage from "./pages/NoPage";
+import "./App.css";
 
 export default function App() {
   return (
