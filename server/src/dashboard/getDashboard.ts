@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import pool from "../startup/dbConnection";
 import { dashboardData } from "./dashboardData";
 
-const getUserPlaces = async (req: Request, res: Response) => {
+const getUserLocations = async (req: Request, res: Response) => {
   try {
     const user = req.params.userID;
     let data;
@@ -22,7 +22,7 @@ const getUserPlaces = async (req: Request, res: Response) => {
   }
 };
 
-const editLocation = async (req: Request, res: Response) => {
+const getUserLocationItems = async (req: Request, res: Response) => {
   try {
     const user = req.params.userID;
     const location = req.params.location;
@@ -35,4 +35,4 @@ const editLocation = async (req: Request, res: Response) => {
   }
 };
 
-export { getUserPlaces, editLocation };
+export { getUserLocations, getUserLocationItems };

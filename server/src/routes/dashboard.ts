@@ -1,10 +1,14 @@
 import express from "express";
-import { editLocation, getUserPlaces } from "../dashboard/getDashboard";
+import { getUserLocations } from "../dashboard/getDashboard";
 import {
   postNewPlace,
   postNewItem,
   postNewFile,
 } from "../dashboard/postDashboard";
+import {
+  getUserLocationItems,
+  putUserLocationItem,
+} from "../dashboard/edit/putEdit";
 const multer = require("multer");
 const router = express.Router();
 
@@ -14,9 +18,11 @@ const upload = multer({
 });
 
 //multiple gets for different forms using params as search query
-router.get("/:userID", getUserPlaces);
+router.get("/:userID", getUserLocations);
 
-router.get("/dashboard/edit/:userID/:location", editLocation);
+router.get("/dashboard/edit/:userID/:location", getUserLocationItems);
+
+router.put("/dashboard/edit/:userID/:location/:itemID", putUserLocationItem);
 
 router.post("/newLocation", postNewPlace); //TODO: update requst to use userid param
 
