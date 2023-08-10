@@ -58,6 +58,11 @@ export default function LocationCardDialog({ closeDialog, ...prop }: any) {
   };
 
   const area: string = prop.area;
+  const word = area.split(" ");
+  for (let i = 0; i < word.length; i++) {
+    word[i] = word[i][0].toUpperCase() + word[i].slice(1).toLowerCase();
+  }
+  const areaTitle = word.join(" ");
 
   function updateFields(fields: Partial<formData>) {
     setData((prev: any) => {
@@ -152,7 +157,9 @@ export default function LocationCardDialog({ closeDialog, ...prop }: any) {
       ) : null}
       <Dialog open={open} onClose={handleClose}>
         <form method="post" id={area.toLowerCase()} onSubmit={handleSubmit}>
-          <DialogTitle>New {area} Item</DialogTitle>
+          <DialogTitle>
+            {prop.edit ? `${areaTitle}: ${prop.item}` : `New ${prop.area} Item`}
+          </DialogTitle>
           <DialogContent>
             <LocationCardDialogForm
               {...data}
@@ -161,17 +168,35 @@ export default function LocationCardDialog({ closeDialog, ...prop }: any) {
             />
           </DialogContent>
           <DialogActions>
-            <Button
-              onClick={() => {
-                handleClose();
-                resetFormData();
-              }}
-            >
-              Cancel
-            </Button>
-            <Button disabled={isInputInvalid} type="submit">
-              Add
-            </Button>
+            {prop.edit ? (
+              <div>
+                <Button
+                  onClick={() => {
+                    handleClose();
+                    resetFormData();
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button disabled={isInputInvalid} type="submit">
+                  Edit
+                </Button>
+              </div>
+            ) : (
+              <div>
+                <Button
+                  onClick={() => {
+                    handleClose();
+                    resetFormData();
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button disabled={isInputInvalid} type="submit">
+                  Add
+                </Button>
+              </div>
+            )}
           </DialogActions>
         </form>
       </Dialog>

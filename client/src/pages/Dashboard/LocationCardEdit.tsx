@@ -2,11 +2,14 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import LocationCardDialog from "./LocationCardDialog";
 import { Box } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import {
   DataGrid,
   GridColDef,
   GridToolbar,
   GridEventListener,
+  GridActionsCellItem,
+  GridRowId,
 } from "@mui/x-data-grid";
 import type {} from "@mui/x-data-grid/themeAugmentation";
 
@@ -40,50 +43,6 @@ const initialFormData: formData = {
   formType: "",
 };
 
-const columns: GridColDef[] = [
-  {
-    field: "item",
-    headerName: "Item",
-    width: 150,
-  },
-  {
-    field: "item_quantity",
-    headerName: "Quantity",
-    width: 100,
-  },
-  {
-    field: "item_purchase_price",
-    headerName: "Price",
-    width: 120,
-  },
-  {
-    field: "item_total_price",
-    headerName: "Total Price",
-    width: 120,
-  },
-  {
-    field: "item_purchase_date",
-    headerName: "Purchase Date",
-    width: 150,
-  },
-  {
-    field: "item_description",
-    headerName: "Description",
-    width: 200,
-  },
-  {
-    field: "place",
-    headerName: "Place",
-    width: 200,
-  },
-  {
-    field: "item_file_path",
-    headerName: "Purchase Proof",
-    width: 200,
-    hideable: false,
-  },
-];
-
 export default function LocationCardEdit() {
   const [rowData, setRowData] = useState<any>([]);
   const [open, setOpen] = useState(false);
@@ -114,7 +73,9 @@ export default function LocationCardEdit() {
     return columns
       .filter(
         (column) =>
-          column.field !== "place" && column.field !== "item_file_path"
+          column.field !== "place" &&
+          column.field !== "item_file_path" &&
+          column.field !== "actions"
       )
       .map((column) => column.field);
   };
@@ -122,6 +83,10 @@ export default function LocationCardEdit() {
   const handleClose = () => {
     setOpen(false);
     setDialogOpen(false);
+  };
+
+  const handleDeleteClick = (id: GridRowId) => () => {
+    console.log("handle delete");
   };
 
   const handleRowClick: GridEventListener<"rowClick"> = (params) => {
@@ -146,11 +111,6 @@ export default function LocationCardEdit() {
     });
   };
 
-  //   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-  //     e.preventDefault();
-  //     e.stopPropagation();
-  //     console.log("edit test");
-  //   };
   useEffect(() => {
     const getLocationItems = async () => {
       try {
@@ -167,6 +127,67 @@ export default function LocationCardEdit() {
     };
     getLocationItems();
   }, [location]);
+
+  const columns: GridColDef[] = [
+    {
+      field: "item",
+      headerName: "Item",
+      width: 150,
+    },
+    {
+      field: "item_quantity",
+      headerName: "Quantity",
+      width: 100,
+    },
+    {
+      field: "item_purchase_price",
+      headerName: "Price",
+      width: 120,
+    },
+    {
+      field: "item_total_price",
+      headerName: "Total Price",
+      width: 120,
+    },
+    {
+      field: "item_purchase_date",
+      headerName: "Purchase Date",
+      width: 150,
+    },
+    {
+      field: "item_description",
+      headerName: "Description",
+      width: 200,
+    },
+    {
+      field: "place",
+      headerName: "Place",
+      width: 200,
+    },
+    {
+      field: "item_file_path",
+      headerName: "Purchase Proof",
+      width: 200,
+      hideable: false,
+    },
+    {
+      field: "actions",
+      type: "actions",
+      width: 100,
+      hideable: false,
+      cellClassName: "actions",
+      getActions: ({ id }) => {
+        return [
+          <GridActionsCellItem
+            icon={<DeleteIcon />}
+            label="Delete"
+            onClick={handleDeleteClick(id)}
+            color="inherit"
+          />,
+        ];
+      },
+    },
+  ];
 
   return (
     <div>
@@ -201,7 +222,6 @@ export default function LocationCardEdit() {
           disableRowSelectionOnClick
           onRowClick={handleRowClick}
         />
-        {/* <form method="put" id={selectedData.place} onSubmit={handleSubmit}> */}
         {dialogOpen ? (
           <LocationCardDialog
             key={location}
@@ -211,7 +231,6 @@ export default function LocationCardEdit() {
             {...selectedData}
           />
         ) : null}
-        {/* </form> */}
       </Box>
     </div>
   );
