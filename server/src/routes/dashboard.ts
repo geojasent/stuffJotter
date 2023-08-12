@@ -22,6 +22,9 @@ router.get("/:userID", getUserLocations);
 
 router.get("/dashboard/edit/:userID/:location", getUserLocationItems);
 
+// router.get("/dashboard/edit/:userID/:item/:location/:filePath", getItemImage);
+// router.get("/images/:itemFileName/*", getItemImage);
+
 router.put("/dashboard/edit/:userID/:location/:itemID", putUserLocationItem);
 
 router.post("/newLocation", postNewPlace); //TODO: update requst to use userid param

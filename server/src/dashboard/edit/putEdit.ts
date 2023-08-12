@@ -6,7 +6,7 @@ const getUserLocationItems = async (req: Request, res: Response) => {
     const user = req.params.userID;
     const location = req.params.location;
     const locationItemData = await pool.query(
-      `SELECT * from itemlist WHERE user_id = ${user} AND place = '${location}'` //filter location?
+      `SELECT * from itemlist WHERE user_id = ${user} AND place = '${location}'`
     );
     res.send(locationItemData.rows);
   } catch (err) {

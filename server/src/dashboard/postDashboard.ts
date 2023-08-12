@@ -69,7 +69,7 @@ const postNewFile = async (req: any, res: Response) => {
     const location = req.params.location;
     const item = req.params.item;
     const file = req.file;
-    //TODO: include filepath
+
     const postFileUpload = await pool.query(
       "INSERT INTO stored_file_path (user_id, item, place, dashboard, file_path, file_size) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
       [user, item, location, false, file.path, file.size]
