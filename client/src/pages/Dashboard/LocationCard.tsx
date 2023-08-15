@@ -19,8 +19,8 @@ interface formData {
   totalAmount: string;
   datePurchased: any;
   itemDescription: string;
-  itemPurchaseProof: any;
   itemFilename: string;
+  itemFilePath: string;
   formInvalid: boolean;
   formType: string;
 }
@@ -33,8 +33,8 @@ const initialFormData: formData = {
   totalAmount: "",
   datePurchased: new Date(),
   itemDescription: "",
-  itemPurchaseProof: "",
   itemFilename: "",
+  itemFilePath: "",
   formInvalid: false,
   formType: "create",
 };

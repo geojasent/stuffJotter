@@ -22,10 +22,7 @@ interface formData {
   totalAmount: string;
   datePurchased: any;
   itemDescription: string;
-  itemPurchaseProof: any;
-  itemFilename: string;
-  itemFileImage: any;
-  //   itemFilePath: string;
+  itemFilePath: any;
   formInvalid: boolean;
   formType: string;
 }
@@ -39,10 +36,7 @@ const initialFormData: formData = {
   totalAmount: "",
   datePurchased: new Date(),
   itemDescription: "",
-  itemPurchaseProof: "",
-  itemFilename: "",
-  itemFileImage: undefined,
-  //   itemFilePath: "",
+  itemFilePath: "",
   formInvalid: false,
   formType: "",
 };
@@ -56,7 +50,6 @@ export default function LocationCardEdit() {
 
   const locationParam = useParams();
   const location = locationParam["location"];
-
   const handleData = (data: any) => {
     let rows = [];
     for (let item of data) {
@@ -114,7 +107,7 @@ export default function LocationCardEdit() {
       totalAmount: rowItem.item_total_price,
       datePurchased: rowItem.item_purchase_date,
       itemDescription: rowItem.item_description,
-      itemPurchaseProof: rowItem.item_file_path,
+      itemFilePath: rowItem.item_file_path,
       itemFilename: itemFileName,
       formInvalid: false,
       formType: "edit",

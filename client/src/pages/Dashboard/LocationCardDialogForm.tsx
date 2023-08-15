@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from "react";
+import { ChangeEvent } from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import {
@@ -21,8 +21,8 @@ interface formData {
   totalAmount: string;
   datePurchased: any;
   itemDescription: string;
-  itemPurchaseProof: any;
   itemFilename: string;
+  formType: string;
 }
 
 interface formProps extends formData {
@@ -37,8 +37,8 @@ export default function LocationCardDialogForm({
   totalAmount,
   datePurchased,
   itemDescription,
-  itemPurchaseProof,
   itemFilename,
+  formType,
   updateFields,
   handleAddFile,
 }: formProps) {
@@ -139,16 +139,16 @@ export default function LocationCardDialogForm({
         <Button color="info" variant="contained" component="span">
           Upload Receipt
         </Button>
-        {" " + itemFilename}
+        {itemFilename && " " + itemFilename}
       </label>
       <div>
-        {itemFilename ? (
+        {itemFilename && formType === "edit" && (
           <img
             src={`http://localhost:5000/images/${itemFilename}`}
-            alt="itemproof"
+            alt=""
             height={100}
           />
-        ) : null}
+        )}
       </div>
     </Box>
   );

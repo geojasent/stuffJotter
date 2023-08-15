@@ -16,9 +16,8 @@ interface formData {
   totalAmount: string;
   datePurchased: any;
   itemDescription: string;
-  itemPurchaseProof: any;
   itemFilename: string;
-  itemFileImage: any;
+  itemFilePath: any;
   formInvalid: boolean;
   formType: string;
 }
@@ -31,9 +30,8 @@ const initialFormData: formData = {
   totalAmount: "",
   datePurchased: new Date(),
   itemDescription: "",
-  itemPurchaseProof: "",
   itemFilename: "",
-  itemFileImage: undefined,
+  itemFilePath: "",
   formInvalid: true,
   formType: "",
 };
@@ -43,6 +41,7 @@ export default function LocationCardDialog({ closeDialog, ...prop }: any) {
   const [isInputInvalid, setInputInvalid] = useState(false);
   const [selectedFile, setSelectedFile] = useState<any>();
   const [open, setOpen] = useState(prop.edit || false);
+  let fetchedFilePath: string;
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -78,7 +77,6 @@ export default function LocationCardDialog({ closeDialog, ...prop }: any) {
     const uploadedFile = e.target.files[0];
     const { name } = uploadedFile;
     updateFields({ itemFilename: name });
-    updateFields({ itemPurchaseProof: uploadedFile });
     setSelectedFile(uploadedFile);
   };
 
@@ -90,7 +88,7 @@ export default function LocationCardDialog({ closeDialog, ...prop }: any) {
     updateFields({ place: e.currentTarget.id });
 
     if (prop.formType === "create") {
-      // handle file post request
+      // handle file post request then use res to create item post request
       const fileData = new FormData();
       fileData.append("upload-photo", selectedFile);
       (async () => {
@@ -103,24 +101,30 @@ export default function LocationCardDialog({ closeDialog, ...prop }: any) {
               method: "post",
               body: fileData,
             }
-          );
-          window.location.reload();
+          )
+            .then((res) => res.json())
+            .then((filePath) => {
+              fetchedFilePath = filePath;
+            });
+          (async () => {
+            try {
+              await fetch(
+                `http://localhost:5000/postNewItem/${1}/${prop.area.toLowerCase()}/${fetchedFilePath}`,
+                {
+                  method: "post",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(data),
+                }
+              );
+            } catch (err) {
+              console.log(err);
+            }
+          })();
         } catch (err) {
           console.log(err);
         }
       })();
-      //handle new item
-      (async () => {
-        try {
-          await fetch(`http://localhost:5000/${1}/${prop.area.toLowerCase()}`, {
-            method: "post",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
-          });
-        } catch (err) {
-          console.log(err);
-        }
-      })();
+      window.location.reload();
     }
 
     if (prop.formType === "edit") {
@@ -148,7 +152,13 @@ export default function LocationCardDialog({ closeDialog, ...prop }: any) {
     data.item && data.itemQuantity && data.purchasePrice && data.itemDescription
       ? setInputInvalid(false)
       : setInputInvalid(true);
-  }, [data.item, data.itemQuantity, data.purchasePrice, data.itemDescription]);
+  }, [
+    data.item,
+    data.itemQuantity,
+    data.purchasePrice,
+    data.itemDescription,
+    data.itemFilePath,
+  ]);
 
   return (
     <div>
