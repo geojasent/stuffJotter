@@ -13,23 +13,19 @@ const multer = require("multer");
 const router = express.Router();
 
 const upload = multer({
-  dest: process.env.FILEPATH, //TODO: handle filepath
+  dest: process.env.FILEPATH,
   limits: { fileSize: 25 * 1024 * 1024 },
 });
 
-//multiple gets for different forms using params as search query
 router.get("/:userID", getUserLocations);
 
 router.get("/dashboard/edit/:userID/:location", getUserLocationItems);
 
-// router.get("/dashboard/edit/:userID/:item/:location/:filePath", getItemImage);
-// router.get("/images/:itemFileName/*", getItemImage);
-
 router.put("/dashboard/edit/:userID/:location/:itemID", putUserLocationItem);
 
-router.post("/newLocation", postNewPlace); //TODO: update requst to use userid param
+router.post("/newLocation", postNewPlace);
 
-router.post(`/:userID/:location`, postNewItem);
+router.post(`/postNewItem/:userID/:location/*`, postNewItem);
 
 router.post(
   `/:userID/:location/:item/:filename`,

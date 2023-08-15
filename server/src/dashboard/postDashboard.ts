@@ -20,10 +20,11 @@ const postNewItem = async (req: Request, res: Response) => {
   try {
     const user = req.params.userID;
     const location = req.params.location;
+    const itemFilePath = req.params[0];
     const data = req.body;
-    //TODO: include filepath
+    //TODO: add user to filepath in prod
     const postItem = await pool.query(
-      "INSERT INTO itemlist (user_id, place, item, item_quantity, item_purchase_price, item_total_price, item_purchase_date, item_description) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
+      "INSERT INTO itemlist (user_id, place, item, item_quantity, item_purchase_price, item_total_price, item_purchase_date, item_description, item_file_path) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *",
       [
         user,
         location,
@@ -33,9 +34,9 @@ const postNewItem = async (req: Request, res: Response) => {
         data.totalAmount,
         data.datePurchased,
         data.itemDescription,
+        itemFilePath,
       ]
     );
-
     res.send("added");
   } catch (err) {
     console.log(err);
@@ -70,11 +71,12 @@ const postNewFile = async (req: any, res: Response) => {
     const item = req.params.item;
     const file = req.file;
 
+    //TODO: add user to filepath in prod
     const postFileUpload = await pool.query(
       "INSERT INTO stored_file_path (user_id, item, place, dashboard, file_path, file_size) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
       [user, item, location, false, file.path, file.size]
     );
-    res.json(postFileUpload.rows[0]);
+    res.json(file.path);
   } catch (err) {
     console.log(err);
   }
