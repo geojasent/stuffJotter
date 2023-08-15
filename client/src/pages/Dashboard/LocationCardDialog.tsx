@@ -18,6 +18,7 @@ interface formData {
   itemDescription: string;
   itemPurchaseProof: any;
   itemFilename: string;
+  itemFileImage: any;
   formInvalid: boolean;
   formType: string;
 }
@@ -32,6 +33,7 @@ const initialFormData: formData = {
   itemDescription: "",
   itemPurchaseProof: "",
   itemFilename: "",
+  itemFileImage: undefined,
   formInvalid: true,
   formType: "",
 };

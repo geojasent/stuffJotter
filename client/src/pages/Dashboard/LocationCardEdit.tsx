@@ -24,6 +24,8 @@ interface formData {
   itemDescription: string;
   itemPurchaseProof: any;
   itemFilename: string;
+  itemFileImage: any;
+  //   itemFilePath: string;
   formInvalid: boolean;
   formType: string;
 }
@@ -39,6 +41,8 @@ const initialFormData: formData = {
   itemDescription: "",
   itemPurchaseProof: "",
   itemFilename: "",
+  itemFileImage: undefined,
+  //   itemFilePath: "",
   formInvalid: false,
   formType: "",
 };
@@ -95,6 +99,12 @@ export default function LocationCardEdit() {
       return x.item_id === params.row.id;
     });
     const rowItem = selectedRow[0];
+    let itemFileName;
+
+    if (rowItem.item_file_path) {
+      itemFileName = rowItem.item_file_path.split("/").pop();
+    }
+
     setSelectedData({
       itemId: rowItem.item_id,
       item: rowItem.item,
@@ -105,7 +115,7 @@ export default function LocationCardEdit() {
       datePurchased: rowItem.item_purchase_date,
       itemDescription: rowItem.item_description,
       itemPurchaseProof: rowItem.item_file_path,
-      itemFilename: "placeholder",
+      itemFilename: itemFileName,
       formInvalid: false,
       formType: "edit",
     });
@@ -199,7 +209,7 @@ export default function LocationCardEdit() {
           initialState={{
             pagination: {
               paginationModel: {
-                pageSize: 5,
+                pageSize: 10,
               },
             },
             columns: {
@@ -217,7 +227,7 @@ export default function LocationCardEdit() {
               getTogglableColumns,
             },
           }}
-          pageSizeOptions={[5]}
+          pageSizeOptions={[10, 50]}
           checkboxSelection
           disableRowSelectionOnClick
           onRowClick={handleRowClick}

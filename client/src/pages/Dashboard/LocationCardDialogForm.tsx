@@ -1,4 +1,4 @@
-import { ChangeEvent } from "react";
+import { useState, ChangeEvent } from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import {
@@ -37,6 +37,7 @@ export default function LocationCardDialogForm({
   totalAmount,
   datePurchased,
   itemDescription,
+  itemPurchaseProof,
   itemFilename,
   updateFields,
   handleAddFile,
@@ -140,6 +141,15 @@ export default function LocationCardDialogForm({
         </Button>
         {" " + itemFilename}
       </label>
+      <div>
+        {itemFilename ? (
+          <img
+            src={`http://localhost:5000/images/${itemFilename}`}
+            alt="itemproof"
+            height={100}
+          />
+        ) : null}
+      </div>
     </Box>
   );
 }
