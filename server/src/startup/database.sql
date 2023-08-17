@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS stuffjotterusers (
     user_username VARCHAR (30) NOT NULL,
     user_password VARCHAR (100) NOT NULL,
     user_email VARCHAR (255) NOT NULL,
-    user_role VARCHAR (30) NOT NULL
+    user_role VARCHAR (30) NOT NULL,
 );
 
 CREATE TABLE IF NOT EXISTS userplaces (
@@ -26,11 +26,12 @@ CREATE TABLE IF NOT EXISTS itemlist (
 );
 
 CREATE TABLE IF NOT EXISTS stored_file_path (
-    id SERIAL PRIMARY KEY,
+    file_id SERIAL PRIMARY KEY,
+    item_id INT NOT NULL,
     user_id INT NOT NULL,
-    item VARCHAR NOT NULL,
     place VARCHAR NOT NULL,
     dashboard BOOLEAN NOT NULL,
     file_path VARCHAR NOT NULL,
-    file_size INT NOT NULL
+    file_size INT NOT NULL,
+    CONSTRAINT fk_itemlist FOREIGN KEY(item_id) REFERENCES itemlist(item_id) ON DELETE CASCADE
 );
