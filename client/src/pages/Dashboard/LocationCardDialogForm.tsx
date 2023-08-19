@@ -139,7 +139,7 @@ export default function LocationCardDialogForm({
         <Button color="info" variant="contained" component="span">
           Upload Receipt
         </Button>
-        {itemFilename && " " + itemFilename}
+        {itemFilename !== "null" ? " " + itemFilename : ""}
       </label>
       <div>
         {itemFilename && formType === "edit" && (

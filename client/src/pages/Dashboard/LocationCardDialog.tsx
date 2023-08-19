@@ -10,6 +10,8 @@ import DialogTitle from "@mui/material/DialogTitle";
 
 interface formData {
   place: string;
+  fileId: undefined | number;
+  itemId: undefined | number;
   item: string;
   itemQuantity: string;
   purchasePrice: string;
@@ -24,6 +26,8 @@ interface formData {
 
 const initialFormData: formData = {
   place: "",
+  fileId: 0,
+  itemId: 0,
   item: "",
   itemQuantity: "",
   purchasePrice: "",
@@ -41,7 +45,8 @@ export default function LocationCardDialog({ closeDialog, ...prop }: any) {
   const [isInputInvalid, setInputInvalid] = useState(false);
   const [selectedFile, setSelectedFile] = useState<any>();
   const [open, setOpen] = useState(prop.edit || false);
-  let fetchedFilePath: string;
+
+  const fileData = new FormData();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -55,7 +60,7 @@ export default function LocationCardDialog({ closeDialog, ...prop }: any) {
   };
 
   const resetFormData = () => {
-    setData(initialFormData);
+    window.location.reload();
   };
 
   const area: string = prop.area;
@@ -87,64 +92,105 @@ export default function LocationCardDialog({ closeDialog, ...prop }: any) {
     handleClose();
     updateFields({ place: e.currentTarget.id });
 
-    if (prop.formType === "create") {
-      // handle file post request then use res to create item post request
-      const fileData = new FormData();
+    const postItemRequest = async () => {
+      try {
+        await fetch(
+          `http://localhost:5000/postItem/${1}/${prop.area.toLowerCase()}/null`,
+          {
+            method: "post",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          }
+        ).then(() => window.location.reload());
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    const postItemAndFileRequest = async (filePath: string | null) => {
+      try {
+        await fetch(
+          `http://localhost:5000/postItem/${1}/${prop.area.toLowerCase()}/${filePath}`,
+          {
+            method: "post",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          }
+        )
+          .then((res) => res.json())
+          .then((item) => postFileRequest(item));
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    const postFileRequest = async (item_id: number) => {
       fileData.append("upload-photo", selectedFile);
-      (async () => {
-        try {
-          await fetch(
-            `http://localhost:5000/${1}/${prop.area.toLowerCase()}/${
-              data.item
-            }/${data.itemFilename}`,
-            {
-              method: "post",
-              body: fileData,
-            }
-          )
-            .then((res) => res.json())
-            .then((filePath) => {
-              fetchedFilePath = filePath;
-            });
-          (async () => {
-            try {
-              await fetch(
-                `http://localhost:5000/postNewItem/${1}/${prop.area.toLowerCase()}/${fetchedFilePath}`,
-                {
-                  method: "post",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify(data),
-                }
-              );
-            } catch (err) {
-              console.log(err);
-            }
-          })();
-        } catch (err) {
-          console.log(err);
-        }
-      })();
-      window.location.reload();
+      try {
+        await fetch(
+          `http://localhost:5000/dashboard/postFile/${1}/${prop.area.toLowerCase()}/${item_id}`,
+          {
+            method: "post",
+            body: fileData,
+          }
+        )
+          .then((res) => res.json())
+          .then((filePath) => {
+            if (filePath) putItemRequest(filePath, item_id);
+          });
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    const putItemRequest = async (filePath: string | null, item_Id: number) => {
+      console.log(data);
+      try {
+        await fetch(
+          `http://localhost:5000/dashboard/edit/putItem/${1}/${prop.area.toLowerCase()}/${item_Id}/${filePath}`,
+          {
+            method: "put",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          }
+        ).then(() => window.location.reload());
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    //file put request then use res as item put request
+    const putItemAndFileRequest = async () => {
+      try {
+        fileData.append("upload-photo", selectedFile);
+        await fetch(
+          `http://localhost:5000/dashboard/edit/putItemAndFile/${1}/${prop.area.toLowerCase()}/${
+            prop.itemId
+          }/${prop.itemFilePath}`,
+          {
+            method: "put",
+            body: fileData,
+          }
+        )
+          .then((res) => res.json())
+          .then((filePath) => putItemRequest(filePath, data.itemId));
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    //handle post request from dashboard page
+    if (prop.formType === "create" && selectedFile) {
+      postItemAndFileRequest(null);
+    } else if (prop.formType === "create" && !selectedFile) {
+      postItemRequest();
     }
 
-    if (prop.formType === "edit") {
-      (async () => {
-        try {
-          await fetch(
-            `http://localhost:5000/dashboard/edit/${1}/${prop.area.toLowerCase()}/${
-              prop.itemId
-            }`,
-            {
-              method: "put",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(data),
-            }
-          );
-          window.location.reload();
-        } catch (err) {
-          console.log(err);
-        }
-      })();
+    //handle put request from edit page
+    if (prop.formType === "edit" && selectedFile) {
+      putItemAndFileRequest();
+    } else if (prop.formType === "edit" && !selectedFile) {
+      putItemRequest(prop.itemFilePath, prop.itemId);
     }
   };
 

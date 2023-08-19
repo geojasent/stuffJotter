@@ -15,6 +15,7 @@ import type {} from "@mui/x-data-grid/themeAugmentation";
 
 interface formData {
   place: string;
+  fileId: undefined | number;
   itemId: undefined | number;
   item: string;
   itemQuantity: string;
@@ -29,6 +30,7 @@ interface formData {
 
 const initialFormData: formData = {
   place: "",
+  fileId: undefined,
   itemId: undefined,
   item: "",
   itemQuantity: "",
