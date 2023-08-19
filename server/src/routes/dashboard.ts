@@ -1,13 +1,10 @@
 import express from "express";
 import { getUserLocations } from "../dashboard/getDashboard";
-import {
-  postNewPlace,
-  postNewItem,
-  postNewFile,
-} from "../dashboard/postDashboard";
+import { postPlace, postItem, postFile } from "../dashboard/postDashboard";
 import {
   getUserLocationItems,
-  putUserLocationItem,
+  putItemFile,
+  putItem,
 } from "../dashboard/edit/putEdit";
 const multer = require("multer");
 const router = express.Router();
@@ -17,20 +14,26 @@ const upload = multer({
   limits: { fileSize: 25 * 1024 * 1024 },
 });
 
-router.get("/:userID", getUserLocations);
+router.get("/:userId", getUserLocations);
 
-router.get("/dashboard/edit/:userID/:location", getUserLocationItems);
+router.get("/dashboard/edit/:userId/:location", getUserLocationItems);
 
-router.put("/dashboard/edit/:userID/:location/:itemID", putUserLocationItem);
+router.put("/dashboard/edit/putItem/:userId/:location/:itemId/*", putItem);
 
-router.post("/newLocation", postNewPlace);
+router.put(
+  "/dashboard/edit/putItemAndFile/:userId/:location/:itemId/*",
+  upload.single("upload-photo"),
+  putItemFile
+);
 
-router.post(`/postNewItem/:userID/:location/*`, postNewItem);
+router.post("/newLocation", postPlace);
+
+router.post(`/postItem/:userId/:location/*`, postItem);
 
 router.post(
-  `/:userID/:location/:item/:filename`,
+  `/dashboard/postFile/:userId/:location/:itemId`,
   upload.single("upload-photo"),
-  postNewFile
+  postFile
 );
 
 module.exports = router;

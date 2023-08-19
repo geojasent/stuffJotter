@@ -4,7 +4,7 @@ import { dashboardData } from "./dashboardData";
 
 const getUserLocations = async (req: Request, res: Response) => {
   try {
-    const user = req.params.userID;
+    const user = req.params.userId;
     let data;
     const userLocations = await pool.query(
       `SELECT place FROM userplaces WHERE user_id = ${user}`
@@ -22,17 +22,4 @@ const getUserLocations = async (req: Request, res: Response) => {
   }
 };
 
-const getUserLocationItems = async (req: Request, res: Response) => {
-  try {
-    const user = req.params.userID;
-    const location = req.params.location;
-    const locationItemData = await pool.query(
-      `SELECT * from itemlist WHERE user_id = ${user} AND place = '${location}'` //filter location?
-    );
-    res.send(locationItemData.rows);
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-export { getUserLocations, getUserLocationItems };
+export { getUserLocations };

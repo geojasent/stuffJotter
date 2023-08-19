@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import pool from "../startup/dbConnection";
 
-const postNewPlace = async (req: Request, res: Response) => {
+const postPlace = async (req: Request, res: Response) => {
   try {
     const data = req.body;
     data.place = data.place.toUpperCase();
@@ -16,9 +16,9 @@ const postNewPlace = async (req: Request, res: Response) => {
   }
 };
 
-const postNewItem = async (req: Request, res: Response) => {
+const postItem = async (req: Request, res: Response) => {
   try {
-    const user = req.params.userID;
+    const user = req.params.userId;
     const location = req.params.location;
     const itemFilePath = req.params[0];
     const data = req.body;
@@ -37,7 +37,7 @@ const postNewItem = async (req: Request, res: Response) => {
         itemFilePath,
       ]
     );
-    res.send("added");
+    res.json(postItem.rows[0].item_id);
   } catch (err) {
     console.log(err);
   }
@@ -64,17 +64,17 @@ const postNewItem = async (req: Request, res: Response) => {
 //   },
 // });
 
-const postNewFile = async (req: any, res: Response) => {
+const postFile = async (req: any, res: Response) => {
   try {
-    const user = req.params.userID;
+    const user = req.params.userId;
     const location = req.params.location;
-    const item = req.params.item;
+    const itemId = req.params.itemId;
     const file = req.file;
 
     //TODO: add user to filepath in prod
     const postFileUpload = await pool.query(
-      "INSERT INTO stored_file_path (user_id, item, place, dashboard, file_path, file_size) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
-      [user, item, location, false, file.path, file.size]
+      "INSERT INTO stored_file_path (item_id, user_id, place, dashboard, file_path, file_size) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+      [itemId, user, location, false, file.path, file.size]
     );
     res.json(file.path);
   } catch (err) {
@@ -82,4 +82,4 @@ const postNewFile = async (req: any, res: Response) => {
   }
 };
 
-export { postNewPlace, postNewItem, postNewFile };
+export { postPlace, postItem, postFile };
