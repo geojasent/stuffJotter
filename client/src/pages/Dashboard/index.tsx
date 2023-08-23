@@ -10,6 +10,7 @@ const Dashboard = () => {
   const [showLocationForm, setShowLocationForm] = useState<boolean>(false);
 
   useEffect(() => {
+    document.title = "StuffJotter Dashboard";
     const getLocationData = async () => {
       try {
         const data = await fetch(`http://localhost:5000/${1}`);

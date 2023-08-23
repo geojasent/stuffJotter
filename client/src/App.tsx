@@ -7,6 +7,7 @@ import NoPage from "./pages/NoPage";
 import "./App.css";
 
 export default function App() {
+  document.title = "StuffJotter";
   return (
     <BrowserRouter>
       <link
