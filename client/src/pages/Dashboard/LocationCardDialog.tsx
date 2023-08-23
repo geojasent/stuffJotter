@@ -7,6 +7,8 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
 
 interface formData {
   place: string;
@@ -45,6 +47,8 @@ export default function LocationCardDialog({ closeDialog, ...prop }: any) {
   const [isInputInvalid, setInputInvalid] = useState(false);
   const [selectedFile, setSelectedFile] = useState<any>();
   const [open, setOpen] = useState(prop.edit || false);
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   const fileData = new FormData();
 
@@ -213,7 +217,7 @@ export default function LocationCardDialog({ closeDialog, ...prop }: any) {
           <AddIcon />
         </IconButton>
       ) : null}
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog fullScreen={fullScreen} open={open} onClose={handleClose}>
         <form method="post" id={area.toLowerCase()} onSubmit={handleSubmit}>
           <DialogTitle>
             {prop.edit ? `${areaTitle}: ${prop.item}` : `New ${prop.area} Item`}

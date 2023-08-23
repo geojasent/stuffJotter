@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import LocationCardDialog from "./LocationCardDialog";
+import HandleDeleteDialog from "../../components/HandleDeleteDialog";
 import { Box } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import {
@@ -9,7 +10,6 @@ import {
   GridToolbar,
   GridEventListener,
   GridActionsCellItem,
-  GridRowId,
 } from "@mui/x-data-grid";
 import type {} from "@mui/x-data-grid/themeAugmentation";
 
@@ -45,8 +45,12 @@ const initialFormData: formData = {
 
 export default function LocationCardEdit() {
   const [rowData, setRowData] = useState<any>([]);
-  const [open, setOpen] = useState(false);
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [openEdit, setOpenEdit] = useState<boolean>(false);
+  const [dialogEditOpen, setDialogEditOpen] = useState<boolean>(false);
+  const [openDelete, setOpenDelete] = useState<boolean>(false);
+  const [deleteRowData, setDeleteRowData] = useState<any>();
+
+  // const [dialogDeleteOpen, setDialogDeleteOpen] = useState(false)
   const [rows, setRows] = useState<any>([]);
   const [selectedData, setSelectedData] = useState<any>(initialFormData);
 
@@ -79,17 +83,37 @@ export default function LocationCardEdit() {
       .map((column) => column.field);
   };
 
-  const handleClose = () => {
-    setOpen(false);
-    setDialogOpen(false);
+  const handleEditClose = () => {
+    setOpenEdit(false);
+    setDialogEditOpen(false);
   };
 
-  const handleDeleteClick = (id: GridRowId) => () => {
-    console.log("handle delete");
+  const handleDeleteClose = () => {
+    setOpenDelete(false);
+  };
+
+  const showDeleteDialog = (deleteRowData: any) => () => {
+    setDeleteRowData(deleteRowData);
+    setOpenDelete(true);
+  };
+
+  const handleDelete = async () => {
+    try {
+      await fetch(
+        `http://localhost:5000/dashboard/edit/delete/${1}/${location}/${
+          deleteRowData.id
+        }`,
+        {
+          method: "delete",
+        }
+      ).then(() => window.location.reload());
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleRowClick: GridEventListener<"rowClick"> = (params) => {
-    setDialogOpen(!open);
+    setDialogEditOpen(!openEdit);
     let selectedRow = rowData.filter((x: any) => {
       return x.item_id === params.row.id;
     });
@@ -181,12 +205,12 @@ export default function LocationCardEdit() {
       width: 100,
       hideable: false,
       cellClassName: "actions",
-      getActions: ({ id }) => {
+      getActions: (params) => {
         return [
           <GridActionsCellItem
             icon={<DeleteIcon />}
             label="Delete"
-            onClick={handleDeleteClick(id)}
+            onClick={showDeleteDialog(params.row)}
             color="inherit"
           />,
         ];
@@ -227,16 +251,23 @@ export default function LocationCardEdit() {
           disableRowSelectionOnClick
           onRowClick={handleRowClick}
         />
-        {dialogOpen ? (
+        {dialogEditOpen && (
           <LocationCardDialog
             key={location}
             area={location}
-            edit={dialogOpen}
-            closeDialog={handleClose}
+            edit={dialogEditOpen}
+            closeDialog={handleEditClose}
             {...selectedData}
           />
-        ) : null}
+        )}
       </Box>
+      {openDelete && (
+        <HandleDeleteDialog
+          closeDialog={handleDeleteClose}
+          handleDelete={handleDelete}
+          data={deleteRowData}
+        />
+      )}
     </div>
   );
 }
