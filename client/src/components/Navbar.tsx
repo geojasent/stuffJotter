@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Link } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -11,11 +12,14 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
+import logo from "../images/logo.svg";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const pages = ["Dashboard"];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+const settings = ["Profile", "Account"];
 
 function ResponsiveAppBar() {
+  const { user, logout, isAuthenticated } = useAuth0();
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
   );
@@ -39,22 +43,26 @@ function ResponsiveAppBar() {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{ background: "#393132" }}>
       <Container maxWidth="xl">
-        <Toolbar disableGutters>
+        <Toolbar disableGutters sx={{ height: "65px" }}>
+          <Link to={isAuthenticated ? "/dashboard" : "/"}>
+            <img src={logo} alt="logo" height="48px" />
+          </Link>
           <Typography
             variant="h6"
             noWrap
             component="a"
-            href="/"
+            href={isAuthenticated ? "/dashboard" : "/"}
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
               fontFamily: "arial",
               fontWeight: 700,
               letterSpacing: ".3rem",
-              color: "inherit",
+              color: "#ffff",
               textDecoration: "none",
+              padding: "0px 10px",
             }}
           >
             StuffJotter
@@ -91,7 +99,9 @@ function ResponsiveAppBar() {
             >
               {pages.map((page) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+                  <Button color="inherit" href={"/" + page.toLowerCase()}>
+                    {page}
+                  </Button>
                 </MenuItem>
               ))}
             </Menu>
@@ -100,7 +110,7 @@ function ResponsiveAppBar() {
             variant="h5"
             noWrap
             component="a"
-            href="/"
+            href={isAuthenticated ? "/dashboard" : "/"}
             sx={{
               mr: 2,
               display: { xs: "flex", md: "none" },
@@ -115,47 +125,81 @@ function ResponsiveAppBar() {
             StuffJotter
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: "white", display: "block" }}
-                href={"/" + page.toLowerCase()}
-              >
-                {page}
-              </Button>
-            ))}
+            {isAuthenticated &&
+              pages.map((page) => (
+                <Button
+                  key={page}
+                  onClick={handleCloseNavMenu}
+                  sx={{ my: 2, color: "#ffff", display: "block" }}
+                  href={"/" + page.toLowerCase()}
+                >
+                  {page}
+                </Button>
+              ))}
           </Box>
 
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: "45px" }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+          {isAuthenticated ? (
+            <Box sx={{ flexGrow: 0 }}>
+              <Tooltip title="Open settings">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <Avatar alt="Remy Sharp" src={user?.picture} />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{ mt: "45px" }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
+              >
+                {settings.map((setting) => (
+                  <MenuItem
+                    key={setting}
+                    component={"a"}
+                    href={`/${setting}`}
+                    onClick={handleCloseUserMenu}
+                  >
+                    <Typography textAlign="center">{setting}</Typography>
+                  </MenuItem>
+                ))}
+                <MenuItem
+                  key="logout"
+                  onClick={() =>
+                    logout({
+                      logoutParams: { returnTo: window.location.origin },
+                    })
+                  }
+                >
+                  <Typography>Logout</Typography>
                 </MenuItem>
-              ))}
-            </Menu>
-          </Box>
+              </Menu>
+            </Box>
+          ) : (
+            <Box>
+              <Button sx={{ color: "#FBBF3D" }} href="/login">
+                Login
+              </Button>
+              <Button
+                sx={{ color: "#FBBF3D" }}
+                onClick={() =>
+                  logout({
+                    logoutParams: { returnTo: window.location.origin },
+                  })
+                }
+              >
+                logout
+              </Button>
+            </Box>
+          )}
         </Toolbar>
       </Container>
     </AppBar>
