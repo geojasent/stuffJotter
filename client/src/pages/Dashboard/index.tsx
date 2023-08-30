@@ -3,17 +3,26 @@ import LocationCard from "./LocationCard";
 import LocationForm from "./LocationForm";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const Dashboard = () => {
   const [showLocationCard, setLocationCard] = useState<boolean>(false);
   const [locationData, setLocationData] = useState<any[]>([]);
   const [showLocationForm, setShowLocationForm] = useState<boolean>(false);
 
+  const { getAccessTokenSilently } = useAuth0();
+
   useEffect(() => {
     document.title = "StuffJotter Dashboard";
     const getLocationData = async () => {
+      const accessToken = await getAccessTokenSilently();
       try {
-        const data = await fetch(`http://localhost:5000/${1}`);
+        const data = await fetch(`http://localhost:5000/${1}`, {
+          headers: {
+            "content-type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
         data.json().then((res) => {
           if (res) {
             //TODO:fetch locations for user and save local copy of fetched data
@@ -27,7 +36,7 @@ const Dashboard = () => {
     };
 
     getLocationData();
-  }, []);
+  }, [getAccessTokenSilently]);
 
   const toggleLocationForm = () => {
     setShowLocationForm(!showLocationForm);
@@ -40,7 +49,14 @@ const Dashboard = () => {
         <div id="container">
           {showLocationCard && <LocationCard data={locationData} />}
         </div>
-        <div>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            margin: "10px",
+            gap: "10px",
+          }}
+        >
           <Fab
             color="primary"
             aria-label="add"
@@ -49,8 +65,8 @@ const Dashboard = () => {
           >
             <AddIcon />
           </Fab>
+          {showLocationForm && <LocationForm />}
         </div>
-        <div>{showLocationForm && <LocationForm />}</div>
       </div>
     </div>
   );
