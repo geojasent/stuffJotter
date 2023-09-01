@@ -1,0 +1,20 @@
+#landing-page-container {
+  display: flex;
+  height: 100vh;
+  /* background-color: #fbbf3d; */
+  background-color: #393132;
+}
+
+#landing-page-content {
+  color: #ffff;
+  padding: 10px;
+}
+
+.slogan {
+  font-family: "Roboto", sans-serif;
+  font-size: 50px;
+}
+
+#landing-image {
+  padding: 10px;
+}
