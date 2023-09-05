@@ -9,6 +9,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
+import { useAuth0 } from "@auth0/auth0-react";
 
 interface formData {
   place: string;
@@ -49,6 +50,8 @@ export default function LocationCardDialog({ closeDialog, ...prop }: any) {
   const [open, setOpen] = useState(prop.edit || false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const [accessToken, setAccessToken] = useState<string | undefined>();
+  const { getAccessTokenSilently } = useAuth0();
 
   const fileData = new FormData();
 
@@ -80,13 +83,14 @@ export default function LocationCardDialog({ closeDialog, ...prop }: any) {
     });
   }
   const handleAddFile = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) {
+    if (!e.target.files?.[0]) {
       return;
+    } else {
+      const uploadedFile = e.target.files?.[0];
+      const { name } = uploadedFile;
+      updateFields({ itemFilename: name });
+      setSelectedFile(uploadedFile);
     }
-    const uploadedFile = e.target.files[0];
-    const { name } = uploadedFile;
-    updateFields({ itemFilename: name });
-    setSelectedFile(uploadedFile);
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -102,7 +106,10 @@ export default function LocationCardDialog({ closeDialog, ...prop }: any) {
           `http://localhost:5000/postItem/${1}/${prop.area.toLowerCase()}/null`,
           {
             method: "post",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
             body: JSON.stringify(data),
           }
         ).then(() => window.location.reload());
@@ -117,7 +124,10 @@ export default function LocationCardDialog({ closeDialog, ...prop }: any) {
           `http://localhost:5000/postItem/${1}/${prop.area.toLowerCase()}/${filePath}`,
           {
             method: "post",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
             body: JSON.stringify(data),
           }
         )
@@ -129,12 +139,18 @@ export default function LocationCardDialog({ closeDialog, ...prop }: any) {
     };
 
     const postFileRequest = async (item_id: number) => {
+      (async () => {
+        setAccessToken(await getAccessTokenSilently());
+      })();
       fileData.append("upload-photo", selectedFile);
       try {
         await fetch(
           `http://localhost:5000/dashboard/postFile/${1}/${prop.area.toLowerCase()}/${item_id}`,
           {
             method: "post",
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
             body: fileData,
           }
         )
@@ -154,7 +170,10 @@ export default function LocationCardDialog({ closeDialog, ...prop }: any) {
           `http://localhost:5000/dashboard/edit/putItem/${1}/${prop.area.toLowerCase()}/${item_Id}/${filePath}`,
           {
             method: "put",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
             body: JSON.stringify(data),
           }
         ).then(() => window.location.reload());
@@ -165,14 +184,20 @@ export default function LocationCardDialog({ closeDialog, ...prop }: any) {
 
     //file put request then use res as item put request
     const putItemAndFileRequest = async () => {
+      (async () => {
+        setAccessToken(await getAccessTokenSilently());
+      })();
+      fileData.append("upload-photo", selectedFile);
       try {
-        fileData.append("upload-photo", selectedFile);
         await fetch(
           `http://localhost:5000/dashboard/edit/putItemAndFile/${1}/${prop.area.toLowerCase()}/${
             prop.itemId
           }/${prop.itemFilePath}`,
           {
             method: "put",
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
             body: fileData,
           }
         )
@@ -202,12 +227,17 @@ export default function LocationCardDialog({ closeDialog, ...prop }: any) {
     data.item && data.itemQuantity && data.purchasePrice && data.itemDescription
       ? setInputInvalid(false)
       : setInputInvalid(true);
+
+    (async () => {
+      setAccessToken(await getAccessTokenSilently());
+    })();
   }, [
     data.item,
     data.itemQuantity,
     data.purchasePrice,
     data.itemDescription,
     data.itemFilePath,
+    getAccessTokenSilently,
   ]);
 
   return (
@@ -235,7 +265,7 @@ export default function LocationCardDialog({ closeDialog, ...prop }: any) {
                 <Button
                   onClick={() => {
                     handleClose();
-                    resetFormData();
+                    // resetFormData();
                   }}
                 >
                   Cancel
