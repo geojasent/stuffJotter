@@ -1,4 +1,4 @@
-import { ChangeEvent } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import {
@@ -12,6 +12,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
+import { useAuth0 } from "@auth0/auth0-react";
 
 interface formData {
   place: string;
@@ -46,6 +47,33 @@ export default function LocationCardDialogForm({
     let total = (Number(purchasePrice) * Number(itemQuantity)).toString();
     updateFields({ totalAmount: total });
   }
+  const [image, setImage] = useState<string>("");
+
+  const { getAccessTokenSilently } = useAuth0();
+
+  useEffect(() => {
+    const getImage = async () => {
+      const accessToken = await getAccessTokenSilently();
+      try {
+        const data = await fetch(
+          `http://localhost:5000/images/${itemFilename}`,
+          {
+            headers: {
+              "content-type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        data.blob().then((res) => {
+          const imageObjectURL = URL.createObjectURL(res);
+          setImage(imageObjectURL);
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    getImage();
+  }, [itemFilename, getAccessTokenSilently]);
 
   return (
     <Box sx={{ display: "flex", flexWrap: "wrap" }}>
@@ -143,11 +171,7 @@ export default function LocationCardDialogForm({
       </label>
       <div>
         {itemFilename && formType === "edit" && (
-          <img
-            src={`http://localhost:5000/images/${itemFilename}`}
-            alt=""
-            height={100}
-          />
+          <img src={image} alt="" height={100} />
         )}
       </div>
     </Box>
