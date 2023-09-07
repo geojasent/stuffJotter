@@ -12,6 +12,7 @@ import {
   GridActionsCellItem,
 } from "@mui/x-data-grid";
 import type {} from "@mui/x-data-grid/themeAugmentation";
+import { useAuth0 } from "@auth0/auth0-react";
 
 interface formData {
   place: string;
@@ -56,6 +57,16 @@ export default function LocationCardEdit() {
 
   const locationParam = useParams();
   const location = locationParam["location"];
+
+  let locationHeader = "";
+  if (location) {
+    const words = location.split(" ");
+    for (let i = 0; i < words.length; i++) {
+      words[i] = words[i][0].toUpperCase() + words[i].slice(1).toLowerCase();
+    }
+    locationHeader = words.join(" ");
+  }
+
   const handleData = (data: any) => {
     let rows = [];
     for (let item of data) {
@@ -71,6 +82,8 @@ export default function LocationCardEdit() {
     }
     setRows(rows);
   };
+
+  const { getAccessTokenSilently } = useAuth0();
 
   const getTogglableColumns = (columns: GridColDef[]) => {
     return columns
@@ -98,6 +111,7 @@ export default function LocationCardEdit() {
   };
 
   const handleDelete = async () => {
+    const accessToken = await getAccessTokenSilently();
     try {
       await fetch(
         `http://localhost:5000/dashboard/edit/delete/${1}/${location}/${
@@ -105,6 +119,10 @@ export default function LocationCardEdit() {
         }`,
         {
           method: "delete",
+          headers: {
+            "content-type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
         }
       ).then(() => window.location.reload());
     } catch (err) {
@@ -142,9 +160,16 @@ export default function LocationCardEdit() {
 
   useEffect(() => {
     const getLocationItems = async () => {
+      const accessToken = await getAccessTokenSilently();
       try {
         const locationItemData = await fetch(
-          `http://localhost:5000/dashboard/edit/${1}/${location}`
+          `http://localhost:5000/dashboard/edit/${1}/${location}`,
+          {
+            headers: {
+              "content-type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
         );
         locationItemData.json().then((res) => {
           handleData(res);
@@ -155,7 +180,7 @@ export default function LocationCardEdit() {
       }
     };
     getLocationItems();
-  }, [location]);
+  }, [location, getAccessTokenSilently]);
 
   const columns: GridColDef[] = [
     {
@@ -220,15 +245,15 @@ export default function LocationCardEdit() {
 
   return (
     <div>
-      <h2>{location}</h2>
-      <Box sx={{ height: 400, width: "100%" }}>
+      <h2>{locationHeader}</h2>
+      <Box sx={{ height: "70vh", width: "100%" }}>
         <DataGrid
           rows={rows}
           columns={columns}
           initialState={{
             pagination: {
               paginationModel: {
-                pageSize: 10,
+                pageSize: 20,
               },
             },
             columns: {
@@ -246,7 +271,7 @@ export default function LocationCardEdit() {
               getTogglableColumns,
             },
           }}
-          pageSizeOptions={[10, 50]}
+          pageSizeOptions={[20, 50]}
           checkboxSelection
           disableRowSelectionOnClick
           onRowClick={handleRowClick}
