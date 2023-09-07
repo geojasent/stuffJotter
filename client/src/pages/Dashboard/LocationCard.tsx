@@ -67,15 +67,15 @@ const LocationCard = (prop: any) => {
               <CardContent
                 sx={{ flex: "1 0 auto", width: "150px", paddingBottom: "0px" }}
               >
-                <Typography component="div" variant="h5">
-                  {locationData[key]}
+                <Typography component="div" variant="h6">
+                  {location}
                 </Typography>
                 <Typography
                   variant="subtitle1"
                   color="text.secondary"
                   component="div"
                 >
-                  {location}
+                  {locationData[key]} items
                 </Typography>
               </CardContent>
               <Box sx={{ display: "flex", alignItems: "center", pl: 1, pb: 1 }}>
@@ -100,7 +100,7 @@ const LocationCard = (prop: any) => {
             </Box>
             <CardMedia
               component="img"
-              sx={{ width: 111 }}
+              sx={{ width: 111, objectFit: "contain" }}
               image={imagePath || add_a_photo}
             />
           </Card>

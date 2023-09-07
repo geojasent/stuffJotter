@@ -16,7 +16,7 @@ import logo from "../images/logo.svg";
 import { useAuth0 } from "@auth0/auth0-react";
 
 const pages = ["Dashboard"];
-const settings = ["Profile", "Account"];
+const settings = ["Locations", "Account"];
 
 function ResponsiveAppBar() {
   const { user, logout, isAuthenticated } = useAuth0();
@@ -165,7 +165,7 @@ function ResponsiveAppBar() {
                   <MenuItem
                     key={setting}
                     component={"a"}
-                    href={`/${setting}`}
+                    href={`/${setting.toLowerCase()}`}
                     onClick={handleCloseUserMenu}
                   >
                     <Typography textAlign="center">{setting}</Typography>

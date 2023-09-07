@@ -13,7 +13,7 @@ const Dashboard = () => {
   const { getAccessTokenSilently } = useAuth0();
 
   useEffect(() => {
-    document.title = "StuffJotter Dashboard";
+    document.title = "Dashboard";
     const getLocationData = async () => {
       const accessToken = await getAccessTokenSilently();
       try {

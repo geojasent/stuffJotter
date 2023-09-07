@@ -3,6 +3,7 @@ import ResponsiveAppBar from "./components/Navbar";
 import LandingPage from "./pages/LandingPage/LandingPage";
 import Dashboard from "./pages/Dashboard/index";
 import LocationCardEdit from "./pages/Dashboard/LocationCardEdit";
+import LocationPage from "./pages/Location";
 import Login from "./pages/Login/Login";
 import NoPage from "./pages/NoPage";
 import { Auth0ProviderWithNavigate } from "./auth0-provider-with-navigate";
@@ -27,6 +28,7 @@ export default function App() {
             path="/dashboard/edit/:location"
             element={<LocationCardEdit />}
           />
+          <Route path="/locations" element={<LocationPage />} />
           <Route path="/*" element={<NoPage />} />
         </Routes>
       </Auth0ProviderWithNavigate>
