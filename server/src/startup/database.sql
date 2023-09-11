@@ -11,7 +11,9 @@ CREATE TABLE IF NOT EXISTS userplaces (
     id SERIAL PRIMARY KEY,
     user_id INT,
     user VARCHAR (50) NOT NULL,
-    place VARCHAR NOT NULL
+    place VARCHAR NOT NULL,
+    file_path VARCHAR (255) UNIQUE,
+    file_size INT
 );
 
 CREATE TABLE IF NOT EXISTS itemlist (
@@ -25,7 +27,7 @@ CREATE TABLE IF NOT EXISTS itemlist (
     item_total_price NUMERIC(15,4) NOT NULL,
     item_purchase_date VARCHAR (50) NOT NULL,
     item_description TEXT NOT NULL,
-    item_file_path VARCHAR (255) NOT NULL
+    item_file_path VARCHAR (255) NOT NULL UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS stored_file_path (
@@ -35,7 +37,7 @@ CREATE TABLE IF NOT EXISTS stored_file_path (
     user VARCHAR (50) NOT NULL,
     place VARCHAR NOT NULL,
     dashboard BOOLEAN NOT NULL,
-    file_path VARCHAR NOT NULL,
-    file_size INT NOT NULL,
+    file_path VARCHAR,
+    file_size INT,
     CONSTRAINT fk_item_id FOREIGN KEY(item_id) REFERENCES itemlist(item_id) ON DELETE CASCADE
 );
