@@ -55,6 +55,7 @@ export default function LocationPage() {
 
   useEffect(() => {
     document.title = "Locations";
+    let locationToFileName: any = {};
     const getLocations = async () => {
       const accessToken = await getAccessTokenSilently();
       try {
@@ -65,67 +66,30 @@ export default function LocationPage() {
           },
         });
 
-        const filePathInfo = await fetch(
-          `http://localhost:5000/locations/${1}`,
-          {
-            headers: {
-              "content-type": "application/json",
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
         const locationData = await data.json();
         setLocationInfo(locationData);
-        //get file path
-        const locationFiles = await filePathInfo.json();
-        let locationToFileName: any = {};
-        // let fileNameArray: string[] = [];
-        // Promise.all(
-        //   locationFiles.map(async (location: any) => {
-        //     if (location.file_path) {
-        //       const filename = location.file_path.split("/").slice(-1)[0];
-        //       const fetchImage = await fetch(
-        //         `http://localhost:5000/images/${filename}`,
-        //         {
-        //           headers: {
-        //             "content-type": "application/json",
-        //             Authorization: `Bearer ${accessToken}`,
-        //           },
-        //         }
-        //       );
-        //       fetchImage.blob().then((res) => {
-        //         const imageObjectURL = URL.createObjectURL(res);
-        //         // return (locationToFileName[location.place.toLowerCase()] =
-        //         //   imageObjectURL);
-        //       });
-        //       // setImagePath(res)));
-        //     } else {
-        //       // return (locationToFileName[location.place.toLowerCase()] = "");
-        //     }
-        //   })
-        // ).then(() => console.log(imagesForLocation));
-        let imageRequests = locationFiles.map(async (location: any) => {
-          const filePath = location.file_path;
-          const place = location.place.toLowerCase();
 
-          if (filePath) {
-            const filename = filePath.split("/").slice(-1)[0];
-            const fetchImage = await fetch(
-              `http://localhost:5000/images/${filename}`,
-              {
-                headers: {
-                  "content-type": "application/json",
-                  Authorization: `Bearer ${accessToken}`,
-                },
-              }
-            );
-            return fetchImage.blob().then((res) => {
-              const imageObjectURL = URL.createObjectURL(res);
-              locationToFileName[place] = imageObjectURL;
-            });
+        let imageRequests = Object.keys(locationData).map(
+          async (location: any) => {
+            const filename = locationData[location].file;
+            if (filename) {
+              const fetchImage = await fetch(
+                `http://localhost:5000/images/${filename}`,
+                {
+                  headers: {
+                    "content-type": "application/json",
+                    Authorization: `Bearer ${accessToken}`,
+                  },
+                }
+              );
+              return fetchImage.blob().then((res) => {
+                const imageObjectURL = URL.createObjectURL(res);
+                locationToFileName[location] = imageObjectURL;
+              });
+            }
           }
-        });
-        Promise.all(imageRequests).then((res: any) => {
+        );
+        Promise.all(imageRequests).then(() => {
           setImagesForLocation(locationToFileName);
         });
       } catch (err) {
@@ -134,6 +98,7 @@ export default function LocationPage() {
     };
     getLocations();
   }, [getAccessTokenSilently]);
+
   return (
     <>
       <div>
@@ -170,7 +135,7 @@ export default function LocationPage() {
                         {location}
                       </Typography>
                       <Typography variant="body1" color="text.primary">
-                        {locationInfo[key]} items
+                        {locationInfo[key].count} items
                       </Typography>
                     </CardContent>
                   </CardActionArea>
