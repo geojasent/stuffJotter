@@ -7,7 +7,7 @@ const getUserLocations = async (req: Request, res: Response) => {
     const user = req.params.userId;
     let data;
     const userLocations = await pool.query(
-      `SELECT place FROM userplaces WHERE user_id = ${user}`
+      `SELECT place, file_path FROM userplaces WHERE user_id = ${user}`
     );
 
     if (userLocations.rows[0]) {

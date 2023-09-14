@@ -3,11 +3,13 @@ const dashboardData = (locationData: object[], itemData: object[]) => {
 
   locationData.map((location: any) => {
     const lowerCaseLocation = location.place.toLowerCase();
-    itemMap.set(lowerCaseLocation, 0);
+    const filePath = location.file_path;
+    const filename = filePath ? filePath.split("/").slice(-1)[0] : "";
+    itemMap.set(lowerCaseLocation, { count: 0, file: filename });
   });
 
   itemData.map((item: any) => {
-    itemMap.set(item.place, itemMap.get(item.place) + 1 || 1);
+    itemMap.get(item.place).count++;
   });
 
   const obj = Object.fromEntries(itemMap);
