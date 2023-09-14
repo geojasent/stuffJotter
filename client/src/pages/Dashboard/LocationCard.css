@@ -1,0 +1,29 @@
+.card {
+  display: flex;
+  margin: 15px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #393132;
+  width: 348px;
+}
+
+.box {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-content {
+  width: 150px;
+  text-decoration: none;
+  color: black;
+}
+
+.stack-container {
+  padding: 0px 10px 16px 10px;
+}
+
+.action-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

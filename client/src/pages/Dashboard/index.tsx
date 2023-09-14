@@ -25,7 +25,6 @@ const Dashboard = () => {
         });
         data.json().then((res) => {
           if (res) {
-            //TODO:fetch locations for user and save local copy of fetched data
             setLocationCard(true);
             setLocationData(res);
           }

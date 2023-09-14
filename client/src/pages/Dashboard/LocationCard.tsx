@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, Link as RouterLink } from "react-router-dom";
+import "./LocationCard.css";
 import LocationCardDialog from "./LocationCardDialog";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
@@ -10,6 +11,7 @@ import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import add_a_photo from "../../images/add_a_photo.svg";
+import { useAuth0 } from "@auth0/auth0-react";
 
 interface formData {
   place: string;
@@ -42,15 +44,49 @@ const initialFormData: formData = {
 const LocationCard = (prop: any) => {
   const [locationData] = useState<any>(prop.data);
   const [inputPlaceholder] = useState<any>(initialFormData);
-  const imagePath: string = "";
-  let urlLocationParam;
+  const [imagesForLocation, setImagesForLocation] = useState<any>({});
+  const { getAccessTokenSilently } = useAuth0();
 
   const navigate = useNavigate();
 
+  let urlLocationParam;
   const handleClick = (location: string) => {
     urlLocationParam = location.toLowerCase();
     navigate(`/dashboard/edit/${urlLocationParam}`);
   };
+
+  useEffect(() => {
+    let locationToFileName: any = {};
+
+    const getImages = async () => {
+      const accessToken = await getAccessTokenSilently();
+
+      let imageRequests = Object.keys(locationData).map(
+        async (location: any) => {
+          const filename = locationData[location].file;
+          if (filename) {
+            const fetchImage = await fetch(
+              `http://localhost:5000/images/${filename}`,
+              {
+                headers: {
+                  "content-type": "application/json",
+                  Authorization: `Bearer ${accessToken}`,
+                },
+              }
+            );
+            return fetchImage.blob().then((res) => {
+              const imageObjectURL = URL.createObjectURL(res);
+              locationToFileName[location] = imageObjectURL;
+            });
+          }
+        }
+      );
+      Promise.all(imageRequests).then(() => {
+        setImagesForLocation(locationToFileName);
+      });
+    };
+    getImages();
+  }, [getAccessTokenSilently, locationData]);
 
   return (
     <>
@@ -62,10 +98,12 @@ const LocationCard = (prop: any) => {
         }
         const location = words.join(" ");
         return (
-          <Card sx={{ display: "flex" }} key={location}>
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <Card className="card" key={location}>
+            <Box className="box">
               <CardContent
-                sx={{ flex: "1 0 auto", width: "150px", paddingBottom: "0px" }}
+                className="card-content"
+                component={RouterLink}
+                to={`/dashboard/edit/${key}`}
               >
                 <Typography component="div" variant="h6">
                   {location}
@@ -75,11 +113,11 @@ const LocationCard = (prop: any) => {
                   color="text.secondary"
                   component="div"
                 >
-                  {locationData[key]} items
+                  {locationData[key].count} items
                 </Typography>
               </CardContent>
-              <Box sx={{ display: "flex", alignItems: "center", pl: 1, pb: 1 }}>
-                <Stack direction="row" spacing={2}>
+              <Box className="stack-container">
+                <Stack direction="row" className="action-container">
                   <LocationCardDialog
                     key={location}
                     area={location}
@@ -99,9 +137,10 @@ const LocationCard = (prop: any) => {
               </Box>
             </Box>
             <CardMedia
-              component="img"
-              sx={{ width: 111, objectFit: "contain" }}
-              image={imagePath || add_a_photo}
+              sx={{ width: 200, objectFit: "contain" }}
+              image={imagesForLocation[key] || add_a_photo}
+              component={RouterLink}
+              to={`/dashboard/edit/${key}`}
             />
           </Card>
         );
