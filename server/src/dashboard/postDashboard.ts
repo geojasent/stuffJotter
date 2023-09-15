@@ -4,7 +4,7 @@ import pool from "../startup/dbConnection";
 const postPlace = async (req: Request, res: Response) => {
   try {
     const data = req.body;
-    data.place = data.place.toUpperCase();
+    data.place = data.place.toLowerCase();
     const postLocation = await pool.query(
       "INSERT INTO userplaces (user_id, place) VALUES ($1, $2) RETURNING *",
       //   //TODO: user_id auth

@@ -1,15 +1,14 @@
 import { Response } from "express";
 import pool from "../startup/dbConnection";
 
-const putLocationFile = async (req: any, res: Response) => {
-  try {
-    const user = Number(req.params.userId);
-    const location = req.params.location.toUpperCase();
-    const file = req.file;
+const updateLocationFile = async (req: any, res: Response) => {
+  const user = req.params.userId;
+  const currentLocation = req.params.currentLocation.toLowerCase();
+  const file = req.file;
 
-    const putFileUpload = await pool.query(
-      `INSERT INTO userplaces (user_id, place, file_path, file_size) VALUES ($1, $2, $3, $4) ON CONFLICT (file_path) DO UPDATE SET user_id = $1, place = $2, file_path = $3, file_size = $4`,
-      [user, location, file.path, file.size]
+  try {
+    await pool.query(
+      `UPDATE userplaces SET file_path = '${file.path}', file_size = '${file.size}' WHERE user_id = ${user} AND place = '${currentLocation}' RETURNING *`
     );
     res.json(file.path);
   } catch (err) {
@@ -17,4 +16,4 @@ const putLocationFile = async (req: any, res: Response) => {
   }
 };
 
-export { putLocationFile };
+export { updateLocationFile };

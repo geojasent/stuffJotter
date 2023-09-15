@@ -1,6 +1,7 @@
 import express from "express";
-import { putLocationFile } from "../location/putFile";
+import { updateLocationFile } from "../location/putFile";
 import { getLocationFile } from "../location/getFile";
+import { updateLocation } from "../location/putLocation";
 
 const multer = require("multer");
 const router = express.Router();
@@ -12,10 +13,12 @@ const upload = multer({
 
 router.get("/:userId", getLocationFile);
 
-router.put(
-  "/putFile/:userId/:location/",
+router.put("/:userId/:currentLocation/:newLocation", updateLocation);
+
+router.post(
+  "/putFile/:userId/:currentLocation",
   upload.single("upload-photo"),
-  putLocationFile
+  updateLocationFile
 );
 
 module.exports = router;
