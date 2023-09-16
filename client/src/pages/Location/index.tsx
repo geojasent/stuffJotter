@@ -28,7 +28,6 @@ export default function LocationPage() {
   };
 
   const handleDialogClose = () => {
-    console.log("close the dialog");
     setOpen(false);
   };
 
@@ -116,7 +115,7 @@ export default function LocationPage() {
                 <Card
                   key={key}
                   sx={{
-                    minWidth: 300,
+                    minWidth: 325,
                   }}
                 >
                   <CardActionArea
@@ -151,14 +150,14 @@ export default function LocationPage() {
                         setAction("photo");
                       }}
                     >
-                      Edit Photo
+                      Change Image
                     </Button>
                     <Button
                       size="small"
                       color="primary"
                       onClick={(e) => {
-                        handlePhotoOpen(e.target);
                         setLocation(key);
+                        setOpen(true);
                         setAction("rename");
                       }}
                     >
@@ -168,8 +167,8 @@ export default function LocationPage() {
                       size="small"
                       sx={{ color: "red" }}
                       onClick={(e) => {
-                        handlePhotoOpen(e.target);
                         setLocation(key);
+                        setOpen(true);
                         setAction("delete");
                       }}
                     >
@@ -186,6 +185,7 @@ export default function LocationPage() {
             location={location}
             action={action}
             handleDialogClose={handleDialogClose}
+            locationInfo={locationInfo}
           />
         )}
       </div>

@@ -164,7 +164,6 @@ export default function LocationCardDialog({ closeDialog, ...prop }: any) {
     };
 
     const putItemRequest = async (filePath: string | null, item_Id: number) => {
-      console.log(data);
       try {
         await fetch(
           `http://localhost:5000/dashboard/edit/putItem/${1}/${prop.area.toLowerCase()}/${item_Id}/${filePath}`,

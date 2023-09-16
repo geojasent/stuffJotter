@@ -8,10 +8,13 @@ import DialogTitle from "@mui/material/DialogTitle";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import { useAuth0 } from "@auth0/auth0-react";
+import { DialogContentText, TextField } from "@mui/material";
 
 export default function CardActionsDialog({ handleDialogClose, ...prop }: any) {
   const [open, setOpen] = useState(prop.open || false);
-  const [fileName, setFileName] = useState("server filename" || "null");
+  const currentLocation = prop.location;
+  const [newLocation, setNewLocation] = useState(prop.location);
+  const [fileName, setFileName] = useState("" || "null");
   const [selectedFile, setSelectedFile] = useState<any>();
   const [disabled, setDisabled] = useState<boolean>(true);
   const { getAccessTokenSilently } = useAuth0();
@@ -31,28 +34,52 @@ export default function CardActionsDialog({ handleDialogClose, ...prop }: any) {
   const handleClose = () => {
     handleDialogClose();
     setOpen(false);
-    console.log(selectedFile);
   };
 
-  const putFile = async (location: string) => {
+  const putFile = async () => {
+    console.log(fileData);
     const accessToken = await getAccessTokenSilently();
     fileData.append("upload-photo", selectedFile);
+    console.log(fileData);
+    console.log(selectedFile);
     try {
-      await fetch(`http://localhost:5000/locations/putFile/${1}/${location}`, {
-        method: "put",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: fileData,
-      })
-        .then((res) => res.json())
-        .then((filePath) => console.log(filePath));
+      await fetch(
+        `http://localhost:5000/locations/putFile/${1}/${currentLocation}`,
+        {
+          method: "post",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: fileData,
+        }
+      ).then(() => window.location.reload());
     } catch (err) {
       console.log(err);
     }
   };
 
-  const word = prop.location.split(" ");
+  const renameLocation = async () => {
+    console.log(newLocation);
+    console.log(currentLocation);
+    const accessToken = await getAccessTokenSilently();
+    try {
+      const updateLocation = await fetch(
+        `http://localhost:5000/locations/${1}/${currentLocation}/${newLocation}`,
+        {
+          method: "put",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: newLocation,
+        }
+      );
+      updateLocation.json().then(() => window.location.reload());
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const word = currentLocation.split(" ");
   for (let i = 0; i < word.length; i++) {
     word[i] = word[i][0].toUpperCase() + word[i].slice(1).toLowerCase();
   }
@@ -62,10 +89,9 @@ export default function CardActionsDialog({ handleDialogClose, ...prop }: any) {
 
   return (
     <Dialog fullScreen={fullScreen} open={open} onClose={handleClose}>
-      <DialogTitle> {areaTitle}</DialogTitle>
       {prop.action === "photo" && (
-        <Box>
-          {/* <form method="put" id={prop.location} onSubmit={putFile}> */}
+        <Box sx={{ width: "315px" }}>
+          <DialogTitle> {areaTitle}</DialogTitle>
           <DialogContent>
             <label htmlFor="upload-photo">
               <input
@@ -78,36 +104,89 @@ export default function CardActionsDialog({ handleDialogClose, ...prop }: any) {
                   setDisabled(false);
                 }}
               />
-              <Button color="info" variant="contained" component="span">
-                Select Photo
-              </Button>
+              <DialogContentText sx={{ marginBottom: "16px" }}>
+                Change the photo for {areaTitle}
+              </DialogContentText>
+              <div
+                style={{
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                <Button color="info" variant="contained" component="span">
+                  Select Photo
+                </Button>
+                {fileName !== "null" ? " " + fileName : ""}
+              </div>
             </label>
-            {fileName !== "null" ? " " + fileName : ""}
           </DialogContent>
           <DialogActions>
             <Button
               onClick={() => {
                 handleClose();
-                // resetFormData();
               }}
             >
               Cancel
             </Button>
             <Button
               disabled={disabled}
-              type="submit"
               onClick={() => {
-                putFile(prop.location);
+                putFile();
                 handleClose();
               }}
             >
               Upload
             </Button>
           </DialogActions>
-          {/* </form> */}
         </Box>
       )}
-      {prop.action === "rename" && <DialogContent>rename</DialogContent>}
+      {prop.action === "rename" && (
+        <Box sx={{ width: "315px" }}>
+          <DialogTitle>Rename {areaTitle}</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              This will update all the items for {areaTitle} to the new
+              location.
+            </DialogContentText>
+            <TextField
+              id="location-name"
+              label="Location"
+              sx={{ m: 1, width: "25ch" }}
+              variant="standard"
+              placeholder={areaTitle}
+              required
+              onChange={(e) => {
+                setDisabled(false);
+                setNewLocation(e.target.value);
+              }}
+            />
+            {/* <label>
+              {" "}
+              Rename {areaTitle} to:
+              <input></input>
+            </label> */}
+            <DialogActions>
+              <Button
+                onClick={() => {
+                  handleClose();
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                disabled={disabled}
+                onClick={() => {
+                  renameLocation();
+                  handleClose();
+                }}
+              >
+                Submit
+              </Button>
+            </DialogActions>
+          </DialogContent>
+        </Box>
+      )}
       {prop.action === "delete" && <DialogContent>delete</DialogContent>}
     </Dialog>
   );
