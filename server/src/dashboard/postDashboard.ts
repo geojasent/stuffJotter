@@ -3,12 +3,12 @@ import pool from "../startup/dbConnection";
 
 const postPlace = async (req: Request, res: Response) => {
   try {
+    const user = req.params.userId;
     const data = req.body;
     data.place = data.place.toLowerCase();
     const postLocation = await pool.query(
       "INSERT INTO userplaces (user_id, place) VALUES ($1, $2) RETURNING *",
-      //   //TODO: user_id auth
-      [1, data.place]
+      [user, data.place]
     );
     res.send(postLocation.rows[0]);
   } catch (err) {
