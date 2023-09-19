@@ -10,7 +10,6 @@ const LocationForm = () => {
   const { getAccessTokenSilently } = useAuth0();
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.value);
     setLocation({ ...location, place: event.target.value });
   };
 
@@ -18,7 +17,7 @@ const LocationForm = () => {
     e.preventDefault();
     (async () => {
       try {
-        await fetch(`http://localhost:5000/newPlace`, {
+        await fetch(`http://localhost:5000/${1}/${location}`, {
           method: "post",
           headers: {
             "Content-Type": "application/json",

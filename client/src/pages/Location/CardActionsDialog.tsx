@@ -37,11 +37,8 @@ export default function CardActionsDialog({ handleDialogClose, ...prop }: any) {
   };
 
   const putFile = async () => {
-    console.log(fileData);
     const accessToken = await getAccessTokenSilently();
     fileData.append("upload-photo", selectedFile);
-    console.log(fileData);
-    console.log(selectedFile);
     try {
       await fetch(
         `http://localhost:5000/locations/putFile/${1}/${currentLocation}`,
@@ -59,8 +56,6 @@ export default function CardActionsDialog({ handleDialogClose, ...prop }: any) {
   };
 
   const renameLocation = async () => {
-    console.log(newLocation);
-    console.log(currentLocation);
     const accessToken = await getAccessTokenSilently();
     try {
       const updateLocation = await fetch(
@@ -74,6 +69,25 @@ export default function CardActionsDialog({ handleDialogClose, ...prop }: any) {
         }
       );
       updateLocation.json().then(() => window.location.reload());
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const removeLocation = async () => {
+    console.log("remove");
+    const accessToken = await getAccessTokenSilently();
+    try {
+      const deleteLocation = await fetch(
+        `http://localhost:5000/locations/${1}/${currentLocation}`,
+        {
+          method: "delete",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      deleteLocation.json().then(() => window.location.reload());
     } catch (err) {
       console.log(err);
     }
@@ -105,7 +119,7 @@ export default function CardActionsDialog({ handleDialogClose, ...prop }: any) {
                 }}
               />
               <DialogContentText sx={{ marginBottom: "16px" }}>
-                Change the photo for {areaTitle}
+                Select the photo you want displayed for the {areaTitle}.
               </DialogContentText>
               <div
                 style={{
@@ -146,7 +160,7 @@ export default function CardActionsDialog({ handleDialogClose, ...prop }: any) {
           <DialogTitle>Rename {areaTitle}</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              This will update all the items for {areaTitle} to the new
+              Renaming will change all the items in the {areaTitle} to the new
               location.
             </DialogContentText>
             <TextField
@@ -161,33 +175,56 @@ export default function CardActionsDialog({ handleDialogClose, ...prop }: any) {
                 setNewLocation(e.target.value);
               }}
             />
-            {/* <label>
-              {" "}
-              Rename {areaTitle} to:
-              <input></input>
-            </label> */}
-            <DialogActions>
-              <Button
-                onClick={() => {
-                  handleClose();
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
-                disabled={disabled}
-                onClick={() => {
-                  renameLocation();
-                  handleClose();
-                }}
-              >
-                Submit
-              </Button>
-            </DialogActions>
           </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={() => {
+                handleClose();
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              disabled={disabled}
+              onClick={() => {
+                renameLocation();
+                handleClose();
+              }}
+            >
+              Submit
+            </Button>
+          </DialogActions>
         </Box>
       )}
-      {prop.action === "delete" && <DialogContent>delete</DialogContent>}
+      {prop.action === "remove" && (
+        <Box sx={{ width: "315px" }}>
+          <DialogTitle>Remove {areaTitle}?</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Are you sure you want to remove {areaTitle}? All items in{" "}
+              {areaTitle} will be lost.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={() => {
+                handleClose();
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              sx={{ color: "red" }}
+              onClick={() => {
+                removeLocation();
+                handleClose();
+              }}
+            >
+              Remove
+            </Button>
+          </DialogActions>
+        </Box>
+      )}
     </Dialog>
   );
 }

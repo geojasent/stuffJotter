@@ -1,4 +1,4 @@
-import { useEffect, useState, ChangeEvent } from "react";
+import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { Link as RouterLink } from "react-router-dom";
 import CardActionsDialog from "./CardActionsDialog";
@@ -7,7 +7,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
-import { Button, TextField, CardActionArea, CardActions } from "@mui/material";
+import { Button, CardActionArea, CardActions } from "@mui/material";
 import add_a_photo from "../../images/add_a_photo.svg";
 
 export default function LocationPage() {
@@ -17,39 +17,13 @@ export default function LocationPage() {
   const [action, setAction] = useState<string>("null");
   const [imagesForLocation, setImagesForLocation] = useState<any>({});
   const { getAccessTokenSilently } = useAuth0();
-  // if (locationInfo) {
-  //   console.log(locationInfo);
-  // }
 
   const handlePhotoOpen = (e: any) => {
-    console.log(open);
     setOpen(true);
-    console.log(e.id);
   };
 
   const handleDialogClose = () => {
     setOpen(false);
-  };
-
-  const handleImageUpdate = async (e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files?.[0]) {
-      return;
-    } else {
-      const uploadedFile = e.target.files?.[0];
-    }
-    console.log(`handle image update of ${e}`);
-    const accessToken = await getAccessTokenSilently();
-    // try {
-    //   const data = await fetch(`http://localhost:5000/locations/postFile/${1}`, {
-    //     headers: {
-    //       "content-type": "application/json",
-    //       Authorization: `Bearer ${accessToken}`,
-    //     },
-    //   });
-    //   data.json().then((res) => setLocationInfo(res));
-    // } catch (err) {
-    //   console.log(err);
-    // }
   };
 
   useEffect(() => {
@@ -101,7 +75,7 @@ export default function LocationPage() {
   return (
     <>
       <div>
-        <h1>Locations</h1>
+        <h1 style={{ marginLeft: "20px" }}>Locations</h1>
         <div id="card-container">
           {locationInfo &&
             Object.keys(locationInfo).map((key: string) => {
@@ -169,10 +143,10 @@ export default function LocationPage() {
                       onClick={(e) => {
                         setLocation(key);
                         setOpen(true);
-                        setAction("delete");
+                        setAction("remove");
                       }}
                     >
-                      Delete
+                      Remove
                     </Button>
                   </CardActions>
                 </Card>

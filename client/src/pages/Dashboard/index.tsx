@@ -4,6 +4,7 @@ import LocationForm from "./LocationForm";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 import { useAuth0 } from "@auth0/auth0-react";
+import { Padding } from "@mui/icons-material";
 
 const Dashboard = () => {
   const [showLocationCard, setLocationCard] = useState<boolean>(false);
@@ -43,29 +44,30 @@ const Dashboard = () => {
 
   return (
     <div>
-      <h1>Dashboard</h1>
-      <div>
-        <div id="container">
-          {showLocationCard && <LocationCard data={locationData} />}
-        </div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            margin: "10px",
-            gap: "10px",
-          }}
+      <h1 style={{ marginLeft: "20px" }}>Dashboard</h1>
+      <div
+        id="container"
+        style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}
+      >
+        {showLocationCard && <LocationCard data={locationData} />}
+      </div>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          margin: "10px",
+          gap: "10px",
+        }}
+      >
+        <Fab
+          color="primary"
+          aria-label="add"
+          id="addLocationButton"
+          onClick={toggleLocationForm}
         >
-          <Fab
-            color="primary"
-            aria-label="add"
-            id="addLocationButton"
-            onClick={toggleLocationForm}
-          >
-            <AddIcon />
-          </Fab>
-          {showLocationForm && <LocationForm />}
-        </div>
+          <AddIcon />
+        </Fab>
+        {showLocationForm && <LocationForm />}
       </div>
     </div>
   );

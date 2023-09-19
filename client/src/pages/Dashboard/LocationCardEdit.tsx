@@ -245,7 +245,7 @@ export default function LocationCardEdit() {
 
   return (
     <div>
-      <h2>{locationHeader}</h2>
+      <h2 style={{ marginLeft: "20px" }}>{locationHeader}</h2>
       <Box sx={{ height: "70vh", width: "100%" }}>
         <DataGrid
           rows={rows}
