@@ -1,10 +1,9 @@
 CREATE TABLE IF NOT EXISTS stuffjotterusers (
     user_id SERIAL PRIMARY KEY,
-    user VARCHAR (50) NOT NULL,
-    user_username VARCHAR (30) NOT NULL,
-    user_password VARCHAR (100) NOT NULL,
+    user_sub VARCHAR (255) NOT NULL UNIQUE.
     user_email VARCHAR (255) NOT NULL,
     user_role VARCHAR (30) NOT NULL,
+    subscription BOOLEAN NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS userplaces (
