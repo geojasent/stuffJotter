@@ -188,16 +188,6 @@ function ResponsiveAppBar() {
               <Button sx={{ color: "#FBBF3D" }} href="/login">
                 Login
               </Button>
-              <Button
-                sx={{ color: "#FBBF3D" }}
-                onClick={() =>
-                  logout({
-                    logoutParams: { returnTo: window.location.origin },
-                  })
-                }
-              >
-                logout
-              </Button>
             </Box>
           )}
         </Toolbar>

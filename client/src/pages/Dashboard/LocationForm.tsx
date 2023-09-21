@@ -7,7 +7,8 @@ import { useAuth0 } from "@auth0/auth0-react";
 const LocationForm = () => {
   const [location, setLocation] = useState({});
   const [accessToken, setAccessToken] = useState<string | undefined>();
-  const { getAccessTokenSilently } = useAuth0();
+  const { user, getAccessTokenSilently } = useAuth0();
+  const userSub = user?.sub ? user?.sub.split("|")[1] : "";
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLocation({ ...location, place: event.target.value });
@@ -17,7 +18,7 @@ const LocationForm = () => {
     e.preventDefault();
     (async () => {
       try {
-        await fetch(`http://localhost:5000/${1}/${location}`, {
+        await fetch(`http://localhost:5000/${userSub}`, {
           method: "post",
           headers: {
             "Content-Type": "application/json",

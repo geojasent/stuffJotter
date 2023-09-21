@@ -3,11 +3,18 @@
   height: 100vh;
   /* background-color: #fbbf3d; */
   background-color: #393132;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  align-items: center;
+  overflow: auto;
+  gap: 40px;
 }
 
 #landing-page-content {
   color: #ffff;
   padding: 10px;
+  height: 300px;
 }
 
 .slogan {

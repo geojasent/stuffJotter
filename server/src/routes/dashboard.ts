@@ -16,7 +16,7 @@ const upload = multer({
   limits: { fileSize: 25 * 1024 * 1024 },
 });
 
-router.post("/:userId/:newLocation", postPlace);
+router.post("/:userId/", postPlace);
 
 router.get("/:userId", getUserLocations);
 

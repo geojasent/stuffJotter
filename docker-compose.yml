@@ -1,0 +1,45 @@
+version: "24.0.6"
+services:
+  frontend:
+    build:
+      context: "./client"
+      dockerfile: "./Dockerfile"
+      target: dev
+    networks:
+      - node-network
+    ports:
+      - 3000:3000
+    volumes:
+      - /app/node_modules
+      - ./client:/client
+  backend:
+    build:
+      context: "./server"
+      dockerfile: "./Dockerfile"
+    networks:
+      - node-network
+    depends_on:
+      - postgres
+    ports:
+      - 5000:5000
+    volumes:
+      # - /app/node_modules
+      - testupload:/file
+      - ./server:/server
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: stuffJotter
+    ports:
+      - "5432:5432"
+    networks:
+      - node-network
+    volumes:
+      - ./sql/database.sql:/docker-entrypoint-initdb.d/database.sql
+volumes:
+  testupload:
+networks:
+  node-network:
+    driver: bridge

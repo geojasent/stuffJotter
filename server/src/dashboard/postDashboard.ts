@@ -6,11 +6,13 @@ const postPlace = async (req: Request, res: Response) => {
     const user = req.params.userId;
     const data = req.body;
     data.place = data.place.toLowerCase();
+    console.log(user);
+    console.log(data);
     const postLocation = await pool.query(
-      "INSERT INTO userplaces (user_id, place) VALUES ($1, $2) RETURNING *",
+      "INSERT INTO userplaces (user_sub, place) VALUES ($1, $2) RETURNING *",
       [user, data.place]
     );
-    res.send(postLocation.rows[0]);
+    res.json("haha");
   } catch (err) {
     console.log(err);
   }

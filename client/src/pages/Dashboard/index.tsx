@@ -10,32 +10,35 @@ const Dashboard = () => {
   const [locationData, setLocationData] = useState<any[]>([]);
   const [showLocationForm, setShowLocationForm] = useState<boolean>(false);
 
-  const { getAccessTokenSilently } = useAuth0();
+  const { user, getAccessTokenSilently } = useAuth0();
+  const userSub = user?.sub ? user?.sub.split("|")[1] : "";
 
   useEffect(() => {
     document.title = "Dashboard";
     const getLocationData = async () => {
       const accessToken = await getAccessTokenSilently();
-      try {
-        const data = await fetch(`http://localhost:5000/${1}`, {
-          headers: {
-            "content-type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        data.json().then((res) => {
-          if (res) {
-            setLocationCard(true);
-            setLocationData(res);
-          }
-        });
-      } catch (err) {
-        console.log(err);
+      if (userSub) {
+        try {
+          const data = await fetch(`http://localhost:5000/${userSub}`, {
+            headers: {
+              "content-type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+          data.json().then((res) => {
+            if (res) {
+              setLocationCard(true);
+              setLocationData(res);
+            }
+          });
+        } catch (err) {
+          console.log(err);
+        }
       }
     };
 
     getLocationData();
-  }, [getAccessTokenSilently]);
+  }, [getAccessTokenSilently, userSub]);
 
   const toggleLocationForm = () => {
     setShowLocationForm(!showLocationForm);

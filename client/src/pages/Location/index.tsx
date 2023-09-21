@@ -16,7 +16,9 @@ export default function LocationPage() {
   const [location, setLocation] = useState<string>("null");
   const [action, setAction] = useState<string>("null");
   const [imagesForLocation, setImagesForLocation] = useState<any>({});
-  const { getAccessTokenSilently } = useAuth0();
+  const { user, getAccessTokenSilently } = useAuth0();
+
+  const userSub = user?.sub ? user?.sub.split("|")[1] : "";
 
   const handlePhotoOpen = (e: any) => {
     setOpen(true);
@@ -31,46 +33,48 @@ export default function LocationPage() {
     let locationToFileName: any = {};
     const getLocations = async () => {
       const accessToken = await getAccessTokenSilently();
-      try {
-        const data = await fetch(`http://localhost:5000/${1}`, {
-          headers: {
-            "content-type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
+      if (userSub) {
+        try {
+          const data = await fetch(`http://localhost:5000/${userSub}`, {
+            headers: {
+              "content-type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
 
-        const locationData = await data.json();
-        setLocationInfo(locationData);
+          const locationData = await data.json();
+          setLocationInfo(locationData);
 
-        let imageRequests = Object.keys(locationData).map(
-          async (location: any) => {
-            const filename = locationData[location].file;
-            if (filename) {
-              const fetchImage = await fetch(
-                `http://localhost:5000/images/${filename}`,
-                {
-                  headers: {
-                    "content-type": "application/json",
-                    Authorization: `Bearer ${accessToken}`,
-                  },
-                }
-              );
-              return fetchImage.blob().then((res) => {
-                const imageObjectURL = URL.createObjectURL(res);
-                locationToFileName[location] = imageObjectURL;
-              });
+          let imageRequests = Object.keys(locationData).map(
+            async (location: any) => {
+              const filename = locationData[location].file;
+              if (filename) {
+                const fetchImage = await fetch(
+                  `http://localhost:5000/images/${filename}`,
+                  {
+                    headers: {
+                      "content-type": "application/json",
+                      Authorization: `Bearer ${accessToken}`,
+                    },
+                  }
+                );
+                return fetchImage.blob().then((res) => {
+                  const imageObjectURL = URL.createObjectURL(res);
+                  locationToFileName[location] = imageObjectURL;
+                });
+              }
             }
-          }
-        );
-        Promise.all(imageRequests).then(() => {
-          setImagesForLocation(locationToFileName);
-        });
-      } catch (err) {
-        console.log(err);
+          );
+          Promise.all(imageRequests).then(() => {
+            setImagesForLocation(locationToFileName);
+          });
+        } catch (err) {
+          console.log(err);
+        }
       }
     };
     getLocations();
-  }, [getAccessTokenSilently]);
+  }, [getAccessTokenSilently, userSub]);
 
   return (
     <>
