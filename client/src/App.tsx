@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard/index";
 import LocationCardEdit from "./pages/Dashboard/LocationCardEdit";
 import LocationPage from "./pages/Location";
 import Login from "./pages/Login/Login";
+import Account from "./pages/Account/Account";
 import NoPage from "./pages/NoPage";
 import { Auth0ProviderWithNavigate } from "./auth0-provider-with-navigate";
 import "./App.css";
@@ -29,6 +30,7 @@ export default function App() {
             element={<LocationCardEdit />}
           />
           <Route path="/locations" element={<LocationPage />} />
+          <Route path="/account" element={<Account />} />
           <Route path="/*" element={<NoPage />} />
         </Routes>
       </Auth0ProviderWithNavigate>

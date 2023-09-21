@@ -4,7 +4,6 @@ import LocationForm from "./LocationForm";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 import { useAuth0 } from "@auth0/auth0-react";
-import { Padding } from "@mui/icons-material";
 
 const Dashboard = () => {
   const [showLocationCard, setLocationCard] = useState<boolean>(false);
