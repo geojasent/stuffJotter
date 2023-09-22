@@ -8,7 +8,7 @@ const updateLocationFile = async (req: any, res: Response) => {
 
   try {
     await pool.query(
-      `UPDATE userplaces SET file_path = '${file.path}', file_size = '${file.size}' WHERE user_id = ${user} AND place = '${currentLocation}' RETURNING *`
+      `UPDATE userplaces SET file_path = '${file.path}', file_size = '${file.size}' WHERE user_sub = '${user}' AND place = '${currentLocation}' RETURNING *`
     );
     res.json(file.path);
   } catch (err) {

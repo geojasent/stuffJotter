@@ -9,9 +9,6 @@ services:
       - node-network
     ports:
       - 3000:3000
-    volumes:
-      - /app/node_modules
-      - ./client:/client
   backend:
     build:
       context: "./server"
@@ -22,10 +19,6 @@ services:
       - postgres
     ports:
       - 5000:5000
-    volumes:
-      # - /app/node_modules
-      - testupload:/file
-      - ./server:/server
   postgres:
     image: postgres
     environment:
@@ -38,8 +31,9 @@ services:
       - node-network
     volumes:
       - ./sql/database.sql:/docker-entrypoint-initdb.d/database.sql
+      - stuffJotterDB:/var/lib/postgresql/data
 volumes:
-  testupload:
+  stuffJotterDB:
 networks:
   node-network:
     driver: bridge

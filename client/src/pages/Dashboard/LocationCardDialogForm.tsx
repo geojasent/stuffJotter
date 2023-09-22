@@ -53,23 +53,25 @@ export default function LocationCardDialogForm({
 
   useEffect(() => {
     const getImage = async () => {
-      const accessToken = await getAccessTokenSilently();
-      try {
-        const data = await fetch(
-          `http://localhost:5000/images/${itemFilename}`,
-          {
-            headers: {
-              "content-type": "application/json",
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        data.blob().then((res) => {
-          const imageObjectURL = URL.createObjectURL(res);
-          setImage(imageObjectURL);
-        });
-      } catch (err) {
-        console.log(err);
+      if (itemFilename !== "null") {
+        const accessToken = await getAccessTokenSilently();
+        try {
+          const data = await fetch(
+            `http://localhost:5000/images/${itemFilename}`,
+            {
+              headers: {
+                "content-type": "application/json",
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }
+          );
+          data.blob().then((res) => {
+            const imageObjectURL = URL.createObjectURL(res);
+            setImage(imageObjectURL);
+          });
+        } catch (err) {
+          console.log(err);
+        }
       }
     };
     getImage();

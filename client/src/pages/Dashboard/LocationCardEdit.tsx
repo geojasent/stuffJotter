@@ -83,7 +83,8 @@ export default function LocationCardEdit() {
     setRows(rows);
   };
 
-  const { getAccessTokenSilently } = useAuth0();
+  const { user, getAccessTokenSilently } = useAuth0();
+  const userSub = user?.sub ? user?.sub.split("|")[1] : "";
 
   const getTogglableColumns = (columns: GridColDef[]) => {
     return columns
@@ -114,9 +115,7 @@ export default function LocationCardEdit() {
     const accessToken = await getAccessTokenSilently();
     try {
       await fetch(
-        `http://localhost:5000/dashboard/edit/delete/${1}/${location}/${
-          deleteRowData.id
-        }`,
+        `http://localhost:5000/dashboard/edit/delete/${userSub}/${location}/${deleteRowData.id}`,
         {
           method: "delete",
           headers: {
@@ -161,26 +160,28 @@ export default function LocationCardEdit() {
   useEffect(() => {
     const getLocationItems = async () => {
       const accessToken = await getAccessTokenSilently();
-      try {
-        const locationItemData = await fetch(
-          `http://localhost:5000/dashboard/edit/${1}/${location}`,
-          {
-            headers: {
-              "content-type": "application/json",
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        locationItemData.json().then((res) => {
-          handleData(res);
-          setRowData(res);
-        });
-      } catch (err) {
-        console.log(err);
+      if (userSub) {
+        try {
+          const locationItemData = await fetch(
+            `http://localhost:5000/dashboard/edit/${userSub}/${location}`,
+            {
+              headers: {
+                "content-type": "application/json",
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }
+          );
+          locationItemData.json().then((res) => {
+            handleData(res);
+            setRowData(res);
+          });
+        } catch (err) {
+          console.log(err);
+        }
       }
     };
     getLocationItems();
-  }, [location, getAccessTokenSilently]);
+  }, [location, getAccessTokenSilently, userSub]);
 
   const columns: GridColDef[] = [
     {

@@ -51,7 +51,9 @@ export default function LocationCardDialog({ closeDialog, ...prop }: any) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const [accessToken, setAccessToken] = useState<string | undefined>();
-  const { getAccessTokenSilently } = useAuth0();
+
+  const { user, getAccessTokenSilently } = useAuth0();
+  const userSub = user?.sub ? user?.sub.split("|")[1] : "";
 
   const fileData = new FormData();
 
@@ -103,7 +105,7 @@ export default function LocationCardDialog({ closeDialog, ...prop }: any) {
     const postItemRequest = async () => {
       try {
         await fetch(
-          `http://localhost:5000/postItem/${1}/${prop.area.toLowerCase()}/null`,
+          `http://localhost:5000/postItem/${userSub}/${prop.area.toLowerCase()}/null`,
           {
             method: "post",
             headers: {
@@ -121,7 +123,7 @@ export default function LocationCardDialog({ closeDialog, ...prop }: any) {
     const postItemAndFileRequest = async (filePath: string | null) => {
       try {
         await fetch(
-          `http://localhost:5000/postItem/${1}/${prop.area.toLowerCase()}/${filePath}`,
+          `http://localhost:5000/postItem/${userSub}/${prop.area.toLowerCase()}/${filePath}`,
           {
             method: "post",
             headers: {
@@ -145,7 +147,7 @@ export default function LocationCardDialog({ closeDialog, ...prop }: any) {
       fileData.append("upload-photo", selectedFile);
       try {
         await fetch(
-          `http://localhost:5000/dashboard/postFile/${1}/${prop.area.toLowerCase()}/${item_id}`,
+          `http://localhost:5000/dashboard/postFile/${userSub}/${prop.area.toLowerCase()}/${item_id}`,
           {
             method: "post",
             headers: {
@@ -166,7 +168,7 @@ export default function LocationCardDialog({ closeDialog, ...prop }: any) {
     const putItemRequest = async (filePath: string | null, item_Id: number) => {
       try {
         await fetch(
-          `http://localhost:5000/dashboard/edit/putItem/${1}/${prop.area.toLowerCase()}/${item_Id}/${filePath}`,
+          `http://localhost:5000/dashboard/edit/putItem/${userSub}/${prop.area.toLowerCase()}/${item_Id}/${filePath}`,
           {
             method: "put",
             headers: {
@@ -189,7 +191,7 @@ export default function LocationCardDialog({ closeDialog, ...prop }: any) {
       fileData.append("upload-photo", selectedFile);
       try {
         await fetch(
-          `http://localhost:5000/dashboard/edit/putItemAndFile/${1}/${prop.area.toLowerCase()}/${
+          `http://localhost:5000/dashboard/edit/putItemAndFile/${userSub}/${prop.area.toLowerCase()}/${
             prop.itemId
           }/${prop.itemFilePath}`,
           {

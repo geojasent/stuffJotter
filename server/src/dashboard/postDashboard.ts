@@ -6,13 +6,11 @@ const postPlace = async (req: Request, res: Response) => {
     const user = req.params.userId;
     const data = req.body;
     data.place = data.place.toLowerCase();
-    console.log(user);
-    console.log(data);
     const postLocation = await pool.query(
       "INSERT INTO userplaces (user_sub, place) VALUES ($1, $2) RETURNING *",
       [user, data.place]
     );
-    res.json("haha");
+    res.send(postLocation.rows[0]);
   } catch (err) {
     console.log(err);
   }
@@ -26,7 +24,7 @@ const postItem = async (req: Request, res: Response) => {
     const data = req.body;
     //TODO: add user to filepath in prod
     const postItem = await pool.query(
-      "INSERT INTO itemlist (user_id, place, item, item_quantity, item_purchase_price, item_total_price, item_purchase_date, item_description, item_file_path) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *",
+      "INSERT INTO itemlist (user_sub, place, item, item_quantity, item_purchase_price, item_total_price, item_purchase_date, item_description, item_file_path) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *",
       [
         user,
         location,
@@ -75,7 +73,7 @@ const postFile = async (req: any, res: Response) => {
 
     //TODO: add user to filepath in prod
     const postFileUpload = await pool.query(
-      "INSERT INTO stored_file_path (item_id, user_id, place, dashboard, file_path, file_size) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+      "INSERT INTO stored_file_path (item_id, user_sub, place, dashboard, file_path, file_size) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
       [itemId, user, location, false, file.path, file.size]
     );
     res.json(file.path);

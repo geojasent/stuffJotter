@@ -17,7 +17,9 @@ export default function CardActionsDialog({ handleDialogClose, ...prop }: any) {
   const [fileName, setFileName] = useState("" || "null");
   const [selectedFile, setSelectedFile] = useState<any>();
   const [disabled, setDisabled] = useState<boolean>(true);
-  const { getAccessTokenSilently } = useAuth0();
+
+  const { user, getAccessTokenSilently } = useAuth0();
+  const userSub = user?.sub ? user?.sub.split("|")[1] : "";
 
   const fileData = new FormData();
 
@@ -41,7 +43,7 @@ export default function CardActionsDialog({ handleDialogClose, ...prop }: any) {
     fileData.append("upload-photo", selectedFile);
     try {
       await fetch(
-        `http://localhost:5000/locations/putFile/${1}/${currentLocation}`,
+        `http://localhost:5000/locations/putFile/${userSub}/${currentLocation}`,
         {
           method: "post",
           headers: {
@@ -58,8 +60,9 @@ export default function CardActionsDialog({ handleDialogClose, ...prop }: any) {
   const renameLocation = async () => {
     const accessToken = await getAccessTokenSilently();
     try {
+      console.log("rename");
       const updateLocation = await fetch(
-        `http://localhost:5000/locations/${1}/${currentLocation}/${newLocation}`,
+        `http://localhost:5000/locations/${userSub}/${currentLocation}/${newLocation}`,
         {
           method: "put",
           headers: {
@@ -79,7 +82,7 @@ export default function CardActionsDialog({ handleDialogClose, ...prop }: any) {
     const accessToken = await getAccessTokenSilently();
     try {
       const deleteLocation = await fetch(
-        `http://localhost:5000/locations/${1}/${currentLocation}`,
+        `http://localhost:5000/locations/${userSub}/${currentLocation}`,
         {
           method: "delete",
           headers: {

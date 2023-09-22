@@ -15,10 +15,41 @@ const Dashboard = () => {
 
   useEffect(() => {
     document.title = "Dashboard";
+
+    const createUser = async () => {
+      const accessToken = await getAccessTokenSilently();
+      try {
+        await fetch(`http://localhost:5000/account/${userSub}`, {
+          method: "post",
+          headers: {
+            "content-type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify(user),
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
     const getLocationData = async () => {
       const accessToken = await getAccessTokenSilently();
       if (userSub) {
         try {
+          const getUserAccount = await fetch(
+            `http://localhost:5000/account/${userSub}`,
+            {
+              headers: {
+                "content-type": "application/json",
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }
+          );
+          getUserAccount.json().then((userAccount) => {
+            if (!userAccount) {
+              createUser();
+            }
+          });
           const data = await fetch(`http://localhost:5000/${userSub}`, {
             headers: {
               "content-type": "application/json",
@@ -38,7 +69,7 @@ const Dashboard = () => {
     };
 
     getLocationData();
-  }, [getAccessTokenSilently, userSub]);
+  }, [getAccessTokenSilently, userSub, user]);
 
   const toggleLocationForm = () => {
     setShowLocationForm(!showLocationForm);

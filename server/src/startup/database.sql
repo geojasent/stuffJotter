@@ -8,7 +8,6 @@ CREATE TABLE IF NOT EXISTS stuffjotterusers (
 
 CREATE TABLE IF NOT EXISTS userplaces (
     id SERIAL PRIMARY KEY,
-    user_id INT,
     user_sub VARCHAR (50) NOT NULL,
     place VARCHAR NOT NULL,
     file_path VARCHAR (255) UNIQUE,
@@ -17,7 +16,6 @@ CREATE TABLE IF NOT EXISTS userplaces (
 
 CREATE TABLE IF NOT EXISTS itemlist (
     item_id SERIAL PRIMARY KEY,
-    user_id INT NOT NULL,
     user_sub VARCHAR (50) NOT NULL,
     place VARCHAR NOT NULL,
     item VARCHAR NOT NULL,
@@ -26,13 +24,12 @@ CREATE TABLE IF NOT EXISTS itemlist (
     item_total_price NUMERIC(15,4) NOT NULL,
     item_purchase_date VARCHAR (50) NOT NULL,
     item_description TEXT NOT NULL,
-    item_file_path VARCHAR (255) NOT NULL UNIQUE
+    item_file_path VARCHAR (255) UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS stored_file_path (
     file_id SERIAL PRIMARY KEY,
     item_id INT NOT NULL UNIQUE,
-    user_id INT NOT NULL,
     user_sub VARCHAR (50) NOT NULL,
     place VARCHAR NOT NULL,
     dashboard BOOLEAN NOT NULL,
